@@ -38,7 +38,7 @@ class LowestshippingAjaxModuleFrontController extends ModuleFrontController
 
         /** @var Lowestshipping $module */
         $module = $this->module;
-        if (!$module instanceof Lowestshipping || $module->isEstimateHiddenForProduct($idProduct)) {
+        if (!$module instanceof Lowestshipping || !$module->isProductPageEstimateEnabled()) {
             $this->ajaxRender(json_encode([
                 'success' => true,
                 'formatted_price' => '',

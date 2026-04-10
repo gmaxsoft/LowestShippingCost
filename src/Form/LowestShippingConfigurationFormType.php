@@ -26,33 +26,28 @@ final class LowestShippingConfigurationFormType extends TranslatorAwareType
 
         $builder
             ->add('default_country', ChoiceType::class, [
-                'label' => $this->trans('Default country (guests)', [], 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Used when the customer is not logged in or has no delivery address.', [], 'Modules.Lowestshipping.Admin'),
+                'label' => $this->trans('Default country for shipping estimate', [], 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Used for guests and for customers without a delivery address.', [], 'Modules.Lowestshipping.Admin'),
                 'choices' => $choices,
                 'constraints' => [new NotBlank()],
             ])
             ->add('price_with_tax', SwitchType::class, [
-                'label' => $this->trans('Display price with tax', [], 'Modules.Lowestshipping.Admin'),
+                'label' => $this->trans('Show cost including tax', [], 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ])
             ->add('text_prefix', TextType::class, [
-                'label' => $this->trans('Text prefix', [], 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Example: "From " or "Cheapest delivery: "', [], 'Modules.Lowestshipping.Admin'),
+                'label' => $this->trans('Price prefix', [], 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Example: “From ” or “Cheapest delivery: ”', [], 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ])
-            ->add('enable_visibility_filter', SwitchType::class, [
-                'label' => $this->trans('Limit display to allowed products/categories', [], 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('When enabled, the block is hidden for products or categories listed below.', [], 'Modules.Lowestshipping.Admin'),
+            ->add('description', TextareaType::class, [
+                'label' => $this->trans('Extra text under the price', [], 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Optional note shown below the shipping price on the product page.', [], 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ])
-            ->add('excluded_product_ids', TextareaType::class, [
-                'label' => $this->trans('Excluded product IDs', [], 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Comma or space separated (e.g. 12, 34). Only used when the option above is enabled.', [], 'Modules.Lowestshipping.Admin'),
-                'required' => false,
-            ])
-            ->add('excluded_category_ids', TextareaType::class, [
-                'label' => $this->trans('Excluded category IDs', [], 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Comma or space separated. Only used when the option above is enabled.', [], 'Modules.Lowestshipping.Admin'),
+            ->add('enable_product_page', SwitchType::class, [
+                'label' => $this->trans('Show block on product page', [], 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Turn off to hide the estimate everywhere on product pages.', [], 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ]);
     }

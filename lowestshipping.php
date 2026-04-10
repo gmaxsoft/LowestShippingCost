@@ -27,7 +27,7 @@ class Lowestshipping extends Module
     {
         $this->name = 'lowestshipping';
         $this->tab = 'shipping_logistics';
-        $this->version = '2.0.0';
+        $this->version = '2.1.0';
         $this->author = 'Maxsoft';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -55,9 +55,8 @@ class Lowestshipping extends Module
             && Configuration::updateValue('LOWESTSHIPPING_DEFAULT_COUNTRY', $defaultCountry > 0 ? $defaultCountry : 0)
             && Configuration::updateValue('LOWESTSHIPPING_PRICE_WITH_TAX', true)
             && Configuration::updateValue('LOWESTSHIPPING_TEXT_PREFIX', '')
-            && Configuration::updateValue('LOWESTSHIPPING_ENABLE_VISIBILITY_FILTER', false)
-            && Configuration::updateValue('LOWESTSHIPPING_EXCLUDED_PRODUCT_IDS', '')
-            && Configuration::updateValue('LOWESTSHIPPING_EXCLUDED_CATEGORY_IDS', '');
+            && Configuration::updateValue('LOWESTSHIPPING_DESCRIPTION', '')
+            && Configuration::updateValue('LOWESTSHIPPING_ENABLE_PRODUCT_PAGE', true);
     }
 
     public function uninstall(): bool
@@ -65,6 +64,8 @@ class Lowestshipping extends Module
         Configuration::deleteByName('LOWESTSHIPPING_DEFAULT_COUNTRY');
         Configuration::deleteByName('LOWESTSHIPPING_PRICE_WITH_TAX');
         Configuration::deleteByName('LOWESTSHIPPING_TEXT_PREFIX');
+        Configuration::deleteByName('LOWESTSHIPPING_DESCRIPTION');
+        Configuration::deleteByName('LOWESTSHIPPING_ENABLE_PRODUCT_PAGE');
         Configuration::deleteByName('LOWESTSHIPPING_ENABLE_VISIBILITY_FILTER');
         Configuration::deleteByName('LOWESTSHIPPING_EXCLUDED_PRODUCT_IDS');
         Configuration::deleteByName('LOWESTSHIPPING_EXCLUDED_CATEGORY_IDS');
@@ -107,12 +108,12 @@ class Lowestshipping extends Module
             return '';
         }
 
-        $idProduct = $this->extractProductId($params);
-        if ($idProduct <= 0) {
+        if (!(bool) Configuration::get('LOWESTSHIPPING_ENABLE_PRODUCT_PAGE')) {
             return '';
         }
 
-        if ($this->shouldHideForProduct($idProduct)) {
+        $idProduct = $this->extractProductId($params);
+        if ($idProduct <= 0) {
             return '';
         }
 
@@ -129,6 +130,7 @@ class Lowestshipping extends Module
         $shipping = $this->getLowestShippingCost($product, $idProductAttribute > 0 ? $idProductAttribute : null, 1);
 
         $prefix = (string) Configuration::get('LOWESTSHIPPING_TEXT_PREFIX');
+        $description = (string) Configuration::get('LOWESTSHIPPING_DESCRIPTION');
 
         $this->context->smarty->assign([
             'lowestshipping_prefix' => $prefix,
@@ -139,7 +141,7 @@ class Lowestshipping extends Module
             'lowestshipping_is_free' => $shipping['is_free_shipping'],
             'lowestshipping_available' => $shipping['available'],
             'lowestshipping_hint' => $shipping['hint_message'],
-            'lowestshipping_description' => '',
+            'lowestshipping_description' => $description,
             'lowestshipping_id_product' => $idProduct,
             'lowestshipping_id_product_attribute' => $idProductAttribute,
             'lowestshipping_ajax_url' => $this->context->link->getModuleLink('lowestshipping', 'ajax', [], true),
@@ -269,49 +271,9 @@ class Lowestshipping extends Module
         return (int) Tools::getValue('id_product');
     }
 
-    public function isEstimateHiddenForProduct(int $idProduct): bool
+    public function isProductPageEstimateEnabled(): bool
     {
-        return $this->shouldHideForProduct($idProduct);
-    }
-
-    private function shouldHideForProduct(int $idProduct): bool
-    {
-        if (!(bool) Configuration::get('LOWESTSHIPPING_ENABLE_VISIBILITY_FILTER')) {
-            return false;
-        }
-
-        $excludedProducts = (string) Configuration::get('LOWESTSHIPPING_EXCLUDED_PRODUCT_IDS');
-        $productIds = $this->parseIdList($excludedProducts);
-        if (in_array($idProduct, $productIds, true)) {
-            return true;
-        }
-
-        $excludedCategories = (string) Configuration::get('LOWESTSHIPPING_EXCLUDED_CATEGORY_IDS');
-        $categoryIds = $this->parseIdList($excludedCategories);
-        if ($categoryIds === []) {
-            return false;
-        }
-
-        $productCategories = Product::getProductCategories($idProduct);
-        foreach ($productCategories as $cid) {
-            if (in_array((int) $cid, $categoryIds, true)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @return int[]
-     */
-    private function parseIdList(string $raw): array
-    {
-        $parts = preg_split('/[\s,;]+/', $raw, -1, PREG_SPLIT_NO_EMPTY);
-        if ($parts === false) {
-            return [];
-        }
-
-        return array_values(array_unique(array_filter(array_map('intval', $parts))));
+        return (bool) Configuration::get('LOWESTSHIPPING_ENABLE_PRODUCT_PAGE');
     }
 }
+

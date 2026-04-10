@@ -15,11 +15,9 @@ final class LowestShippingConfigurationDataConfiguration implements DataConfigur
 
     public const TEXT_PREFIX = 'LOWESTSHIPPING_TEXT_PREFIX';
 
-    public const ENABLE_VISIBILITY_FILTER = 'LOWESTSHIPPING_ENABLE_VISIBILITY_FILTER';
+    public const DESCRIPTION = 'LOWESTSHIPPING_DESCRIPTION';
 
-    public const EXCLUDED_PRODUCT_IDS = 'LOWESTSHIPPING_EXCLUDED_PRODUCT_IDS';
-
-    public const EXCLUDED_CATEGORY_IDS = 'LOWESTSHIPPING_EXCLUDED_CATEGORY_IDS';
+    public const ENABLE_PRODUCT_PAGE = 'LOWESTSHIPPING_ENABLE_PRODUCT_PAGE';
 
     private ConfigurationInterface $configuration;
 
@@ -34,9 +32,8 @@ final class LowestShippingConfigurationDataConfiguration implements DataConfigur
             'default_country' => (int) $this->configuration->get(static::DEFAULT_COUNTRY),
             'price_with_tax' => (bool) $this->configuration->get(static::PRICE_WITH_TAX),
             'text_prefix' => (string) $this->configuration->get(static::TEXT_PREFIX),
-            'enable_visibility_filter' => (bool) $this->configuration->get(static::ENABLE_VISIBILITY_FILTER),
-            'excluded_product_ids' => (string) $this->configuration->get(static::EXCLUDED_PRODUCT_IDS),
-            'excluded_category_ids' => (string) $this->configuration->get(static::EXCLUDED_CATEGORY_IDS),
+            'description' => (string) $this->configuration->get(static::DESCRIPTION),
+            'enable_product_page' => (bool) $this->configuration->get(static::ENABLE_PRODUCT_PAGE),
         ];
     }
 
@@ -59,9 +56,8 @@ final class LowestShippingConfigurationDataConfiguration implements DataConfigur
         $this->configuration->set(static::DEFAULT_COUNTRY, (int) $configuration['default_country']);
         $this->configuration->set(static::PRICE_WITH_TAX, (bool) $configuration['price_with_tax']);
         $this->configuration->set(static::TEXT_PREFIX, (string) $configuration['text_prefix']);
-        $this->configuration->set(static::ENABLE_VISIBILITY_FILTER, (bool) $configuration['enable_visibility_filter']);
-        $this->configuration->set(static::EXCLUDED_PRODUCT_IDS, (string) $configuration['excluded_product_ids']);
-        $this->configuration->set(static::EXCLUDED_CATEGORY_IDS, (string) $configuration['excluded_category_ids']);
+        $this->configuration->set(static::DESCRIPTION, (string) $configuration['description']);
+        $this->configuration->set(static::ENABLE_PRODUCT_PAGE, (bool) $configuration['enable_product_page']);
 
         return [];
     }
@@ -72,9 +68,8 @@ final class LowestShippingConfigurationDataConfiguration implements DataConfigur
             $configuration['default_country'],
             $configuration['price_with_tax'],
             $configuration['text_prefix'],
-            $configuration['enable_visibility_filter'],
-            $configuration['excluded_product_ids'],
-            $configuration['excluded_category_ids']
+            $configuration['description'],
+            $configuration['enable_product_page']
         );
     }
 }

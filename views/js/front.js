@@ -42,8 +42,8 @@
         if (!data || !data.success) {
           return;
         }
-        var priceEl = block.querySelector('.lowestshipping-price');
-        var prefixEl = block.querySelector('.lowestshipping-prefix');
+        var priceEl = block.querySelector('#lowest-shipping-price');
+        var prefixEl = block.querySelector('.lowest-shipping-prefix');
         if (prefixEl && typeof data.prefix === 'string') {
           prefixEl.textContent = data.prefix;
         }

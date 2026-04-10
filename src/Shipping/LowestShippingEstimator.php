@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PrestaShop\Module\Lowestshipping\Shipping;
 
 use Address;
+use Carrier;
 use Cart;
 use CartRule;
 use Configuration;
@@ -15,9 +16,8 @@ use State;
 use Validate;
 
 /**
- * Simulates a one-line cart and reads native delivery options so carrier rules,
- * weights, dimensions, additional_shipping_cost, combinations, cart rules, tax, etc.
- * stay consistent with checkout (subject to hooks like actionFilterDeliveryOptionList).
+ * Symuluje koszyk (PrestaShop wymaga krótkotrwałego zapisu wiersza Cart w bazie
+ * do wywołania getDeliveryOptionList; rekord jest usuwany zaraz po kalkulacji).
  */
 final class LowestShippingEstimator
 {
@@ -26,17 +26,63 @@ final class LowestShippingEstimator
         int $idProduct,
         int $idProductAttribute,
         int $defaultCountryId,
-        bool $withTax
+        bool $withTax,
+        int $quantity = 1
     ): ?float {
+        $detail = $this->estimateDetailed(
+            $context,
+            $idProduct,
+            $idProductAttribute,
+            $quantity,
+            $defaultCountryId,
+            $withTax
+        );
+
+        return $detail['available'] ? (float) $detail['price'] : null;
+    }
+
+    /**
+     * @return array{
+     *   available: bool,
+     *   price: float|null,
+     *   carrier_name: string,
+     *   is_free_shipping: bool,
+     *   reason: string|null
+     * }
+     */
+    public function estimateDetailed(
+        Context $context,
+        int $idProduct,
+        int $idProductAttribute,
+        int $quantity,
+        int $defaultCountryId,
+        bool $withTax
+    ): array {
+        $empty = static fn (string $reason): array => [
+            'available' => false,
+            'price' => null,
+            'carrier_name' => '',
+            'is_free_shipping' => false,
+            'reason' => $reason,
+        ];
+
         $product = new Product($idProduct, true, $context->language->id, $context->shop->id);
 
-        if (!Validate::isLoadedObject($product) || !$product->active || $product->is_virtual) {
-            return null;
+        if (!Validate::isLoadedObject($product) || !$product->active) {
+            return $empty('invalid_product');
+        }
+
+        if ($product->is_virtual) {
+            return $empty('virtual');
+        }
+
+        if ($quantity < 1) {
+            $quantity = 1;
         }
 
         $addressMeta = $this->resolveDeliveryAddress($context, $defaultCountryId);
         if ($addressMeta === null) {
-            return null;
+            return $empty('no_address');
         }
 
         $oldCart = $context->cart;
@@ -58,10 +104,10 @@ final class LowestShippingEstimator
         if (!$simCart->add()) {
             $this->deleteAddressIfEphemeral($addressMeta);
 
-            return null;
+            return $empty('cart_error');
         }
 
-        $simCart->updateQty(1, $idProduct, $idProductAttribute, null, 'up', (int) $context->shop->id);
+        $simCart->updateQty($quantity, $idProduct, $idProductAttribute, null, 'up', (int) $context->shop->id);
 
         $context->cart = $simCart;
 
@@ -76,7 +122,97 @@ final class LowestShippingEstimator
         $simCart->delete();
         $this->deleteAddressIfEphemeral($addressMeta);
 
-        return $this->extractLowestPrice($deliveryOptionList, $withTax);
+        $best = $this->extractBestDeliveryOption($deliveryOptionList, $withTax, (int) $context->language->id);
+
+        if ($best === null) {
+            return $empty('no_carriers');
+        }
+
+        return [
+            'available' => true,
+            'price' => $best['price'],
+            'carrier_name' => $best['carrier_name'],
+            'is_free_shipping' => $best['is_free_shipping'],
+            'reason' => null,
+        ];
+    }
+
+    /**
+     * @param array<int|string, mixed> $deliveryOptionList
+     *
+     * @return array{price: float, carrier_name: string, is_free_shipping: bool}|null
+     */
+    private function extractBestDeliveryOption(array $deliveryOptionList, bool $withTax, int $idLang): ?array
+    {
+        if ($deliveryOptionList === []) {
+            return null;
+        }
+
+        $bestOption = null;
+        $bestPrice = null;
+
+        foreach ($deliveryOptionList as $options) {
+            if (!is_array($options)) {
+                continue;
+            }
+
+            foreach ($options as $option) {
+                if (!is_array($option)) {
+                    continue;
+                }
+
+                if (!isset($option['total_price_with_tax'], $option['total_price_without_tax'])) {
+                    continue;
+                }
+
+                $price = $withTax
+                    ? (float) $option['total_price_with_tax']
+                    : (float) $option['total_price_without_tax'];
+
+                if ($bestPrice === null || $price < $bestPrice) {
+                    $bestPrice = $price;
+                    $bestOption = $option;
+                }
+            }
+        }
+
+        if ($bestOption === null || $bestPrice === null) {
+            return null;
+        }
+
+        $names = [];
+        foreach ($bestOption['carrier_list'] ?? [] as $carrierRow) {
+            if (!is_array($carrierRow)) {
+                continue;
+            }
+
+            $instance = $carrierRow['instance'] ?? null;
+            if ($instance instanceof Carrier) {
+                $names[] = $this->resolveCarrierLabel($instance, $idLang);
+            }
+        }
+
+        $carrierName = implode(' + ', array_filter($names));
+
+        return [
+            'price' => $bestPrice,
+            'carrier_name' => $carrierName,
+            'is_free_shipping' => (bool) ($bestOption['is_free'] ?? false),
+        ];
+    }
+
+    private function resolveCarrierLabel(Carrier $carrier, int $idLang): string
+    {
+        $name = $carrier->name;
+        if (is_array($name)) {
+            if (isset($name[$idLang]) && $name[$idLang] !== '') {
+                return (string) $name[$idLang];
+            }
+
+            return (string) reset($name);
+        }
+
+        return (string) $name;
     }
 
     /**
@@ -136,40 +272,5 @@ final class LowestShippingEstimator
         if (Validate::isLoadedObject($addr)) {
             $addr->delete();
         }
-    }
-
-    private function extractLowestPrice(array $deliveryOptionList, bool $withTax): ?float
-    {
-        if ($deliveryOptionList === []) {
-            return null;
-        }
-
-        $min = null;
-
-        foreach ($deliveryOptionList as $options) {
-            if (!is_array($options)) {
-                continue;
-            }
-
-            foreach ($options as $option) {
-                if (!is_array($option)) {
-                    continue;
-                }
-
-                if (!isset($option['total_price_with_tax'], $option['total_price_without_tax'])) {
-                    continue;
-                }
-
-                $price = $withTax
-                    ? (float) $option['total_price_with_tax']
-                    : (float) $option['total_price_without_tax'];
-
-                if ($min === null || $price < $min) {
-                    $min = $price;
-                }
-            }
-        }
-
-        return $min;
     }
 }

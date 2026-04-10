@@ -121,23 +121,25 @@ class Lowestshipping extends Module
             $idProductAttribute = (int) Product::getDefaultAttribute($idProduct);
         }
 
-        $defaultCountry = (int) Configuration::get('LOWESTSHIPPING_DEFAULT_COUNTRY');
-        $withTax = (bool) Configuration::get('LOWESTSHIPPING_PRICE_WITH_TAX');
-        $prefix = (string) Configuration::get('LOWESTSHIPPING_TEXT_PREFIX');
-
-        $estimator = new LowestShippingEstimator();
-        $price = $estimator->estimate($this->context, $idProduct, $idProductAttribute, $defaultCountry, $withTax);
-
-        if ($price === null) {
+        $product = new Product($idProduct, false, $this->context->language->id, $this->context->shop->id);
+        if (!Validate::isLoadedObject($product) || $product->is_virtual) {
             return '';
         }
 
-        $formatted = Tools::displayPrice($price, $this->context->currency);
+        $shipping = $this->getLowestShippingCost($product, $idProductAttribute > 0 ? $idProductAttribute : null, 1);
+
+        $prefix = (string) Configuration::get('LOWESTSHIPPING_TEXT_PREFIX');
 
         $this->context->smarty->assign([
             'lowestshipping_prefix' => $prefix,
-            'lowestshipping_formatted' => $formatted,
-            'lowestshipping_price' => $price,
+            'lowestshipping_formatted' => $shipping['formatted_price'],
+            'lowestshipping_price' => $shipping['price'],
+            'lowestshipping_carrier_name' => $shipping['carrier_name'],
+            'lowestshipping_carrier_line' => $shipping['carrier_line'],
+            'lowestshipping_is_free' => $shipping['is_free_shipping'],
+            'lowestshipping_available' => $shipping['available'],
+            'lowestshipping_hint' => $shipping['hint_message'],
+            'lowestshipping_description' => '',
             'lowestshipping_id_product' => $idProduct,
             'lowestshipping_id_product_attribute' => $idProductAttribute,
             'lowestshipping_ajax_url' => $this->context->link->getModuleLink('lowestshipping', 'ajax', [], true),
@@ -145,6 +147,105 @@ class Lowestshipping extends Module
         ]);
 
         return $this->fetch('module:lowestshipping/views/templates/hook/displayProductAdditionalInfo.tpl');
+    }
+
+    /**
+     * Kalkulacja najniższego kosztu dostawy przez natywne Cart::getDeliveryOptionList (reguły przewoźników, waga, cena, wymiary, kombinacje).
+     *
+     * @return array{
+     *   available: bool,
+     *   price: float|null,
+     *   formatted_price: string,
+     *   carrier_name: string,
+     *   carrier_line: string,
+     *   is_free_shipping: bool,
+     *   hint_message: string
+     * }
+     */
+    private function getLowestShippingCost(Product $product, ?int $idProductAttribute = null, int $quantity = 1): array
+    {
+        $id = (int) $product->id;
+        $attr = ($idProductAttribute !== null && $idProductAttribute > 0)
+            ? $idProductAttribute
+            : (int) Product::getDefaultAttribute($id);
+
+        $defaultCountry = (int) Configuration::get('LOWESTSHIPPING_DEFAULT_COUNTRY');
+        $withTax = (bool) Configuration::get('LOWESTSHIPPING_PRICE_WITH_TAX');
+
+        $estimator = new LowestShippingEstimator();
+        $raw = $estimator->estimateDetailed(
+            $this->context,
+            $id,
+            $attr,
+            $quantity,
+            $defaultCountry,
+            $withTax
+        );
+
+        if ($raw['available'] && $raw['price'] !== null) {
+            $carrierLine = $raw['carrier_name'] !== ''
+                ? $this->trans('Carrier: %carrier%', ['%carrier%' => $raw['carrier_name']], 'Modules.Lowestshipping.Shop')
+                : '';
+
+            return [
+                'available' => true,
+                'price' => (float) $raw['price'],
+                'formatted_price' => Tools::displayPrice((float) $raw['price'], $this->context->currency),
+                'carrier_name' => (string) $raw['carrier_name'],
+                'is_free_shipping' => (bool) $raw['is_free_shipping'],
+                'carrier_line' => $carrierLine,
+                'hint_message' => '',
+            ];
+        }
+
+        return [
+            'available' => false,
+            'price' => null,
+            'formatted_price' => '',
+            'carrier_name' => '',
+            'is_free_shipping' => false,
+            'carrier_line' => '',
+            'hint_message' => $this->buildShippingUnavailableHint((string) ($raw['reason'] ?? ''), $id, $attr, $quantity, $defaultCountry, $withTax),
+        ];
+    }
+
+    private function buildShippingUnavailableHint(
+        string $reason,
+        int $idProduct,
+        int $idProductAttribute,
+        int $quantity,
+        int $defaultCountry,
+        bool $withTax
+    ): string {
+        if ($reason === 'virtual' || $reason === 'invalid_product') {
+            return '';
+        }
+
+        if ($reason === 'no_carriers' || $reason === 'cart_error') {
+            return $this->trans('No delivery option is available for this product at the moment.', [], 'Modules.Lowestshipping.Shop');
+        }
+
+        if ($reason === 'no_address') {
+            $fallback = (new LowestShippingEstimator())->estimate(
+                $this->context,
+                $idProduct,
+                $idProductAttribute,
+                (int) Configuration::get('PS_COUNTRY_DEFAULT') ?: $defaultCountry,
+                $withTax,
+                $quantity
+            );
+            if ($fallback !== null) {
+                return $this->trans(
+                    'Shipping from %price%',
+                    ['%price%' => Tools::displayPrice($fallback, $this->context->currency)],
+                    'Modules.Lowestshipping.Shop'
+                );
+            }
+
+            return $this->trans('Shipping cost will be calculated at checkout.', [], 'Modules.Lowestshipping.Shop');
+        }
+
+        return $this->trans('Shipping cost will be calculated at checkout.', [], 'Modules.Lowestshipping.Shop');
     }
 
     private function extractProductId(array $params): int

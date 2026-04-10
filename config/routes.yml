@@ -1,0 +1,7 @@
+lowestshipping_configuration:
+  path: /lowestshipping/configuration
+  methods: [GET, POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Lowestshipping\Controller\LowestShippingConfigurationController::index'
+    _legacy_controller: AdminModules
+    _legacy_link: AdminModules

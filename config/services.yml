@@ -1,0 +1,37 @@
+services:
+  _defaults:
+    public: false
+    autowire: true
+    autoconfigure: true
+
+  PrestaShop\Module\Lowestshipping\Controller\LowestShippingConfigurationController:
+    public: true
+    tags:
+      - { name: controller.service_arguments }
+
+  prestashop.module.lowestshipping.form.type.configuration:
+    class: PrestaShop\Module\Lowestshipping\Form\LowestShippingConfigurationFormType
+    parent: form.type.translatable.aware
+    public: true
+    tags:
+      - { name: form.type }
+
+  prestashop.module.lowestshipping.form.configuration_data_configuration:
+    class: PrestaShop\Module\Lowestshipping\Form\LowestShippingConfigurationDataConfiguration
+    arguments:
+      - '@prestashop.adapter.legacy.configuration'
+
+  prestashop.module.lowestshipping.form.configuration_form_data_provider:
+    class: PrestaShop\Module\Lowestshipping\Form\LowestShippingConfigurationFormDataProvider
+    arguments:
+      - '@prestashop.module.lowestshipping.form.configuration_data_configuration'
+
+  prestashop.module.lowestshipping.form.configuration_form_handler:
+    class: PrestaShop\PrestaShop\Core\Form\Handler
+    public: true
+    arguments:
+      - '@form.factory'
+      - '@prestashop.core.hook.dispatcher'
+      - '@prestashop.module.lowestshipping.form.configuration_form_data_provider'
+      - 'PrestaShop\Module\Lowestshipping\Form\LowestShippingConfigurationFormType'
+      - 'LowestShippingConfiguration'

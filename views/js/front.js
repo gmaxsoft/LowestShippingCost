@@ -1,27 +1,91 @@
 /**
-* 2007-2026 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2026 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*
-* Don't forget to prefix your containers with your own identifier
-* to avoid any conflicts with others containers.
-*/
+ * 2007-2026 PrestaShop — lowestshipping
+ * @license AFL-3.0
+ */
+(function () {
+  'use strict';
+
+  function getBlock() {
+    return document.getElementById('lowestshipping-product-block');
+  }
+
+  function fetchLowest(block, idProduct, idProductAttribute) {
+    if (!block) {
+      return;
+    }
+
+    var ajaxUrl = block.getAttribute('data-ajax-url');
+    var token = block.getAttribute('data-token') || '';
+    if (!ajaxUrl) {
+      return;
+    }
+
+    var url =
+      ajaxUrl +
+      (ajaxUrl.indexOf('?') >= 0 ? '&' : '?') +
+      'ajax=1&action=lowestshipping&id_product=' +
+      encodeURIComponent(String(idProduct)) +
+      '&id_product_attribute=' +
+      encodeURIComponent(String(idProductAttribute || 0)) +
+      '&token=' +
+      encodeURIComponent(token);
+
+    fetch(url, {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' },
+    })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data || !data.success) {
+          return;
+        }
+        var priceEl = block.querySelector('.lowestshipping-price');
+        var prefixEl = block.querySelector('.lowestshipping-prefix');
+        if (prefixEl && typeof data.prefix === 'string') {
+          prefixEl.textContent = data.prefix;
+        }
+        if (priceEl) {
+          priceEl.innerHTML = data.formatted_price || '';
+        }
+        if (!data.formatted_price) {
+          block.style.display = 'none';
+        } else {
+          block.style.display = '';
+        }
+      })
+      .catch(function () {});
+  }
+
+  function onCombinationChange(event) {
+    var block = getBlock();
+    if (!block || !event || !event.detail) {
+      return;
+    }
+
+    var idProduct =
+      parseInt(String(event.detail.id_product || block.getAttribute('data-id-product') || '0'), 10) || 0;
+    var idPa =
+      parseInt(String(event.detail.id_product_attribute || '0'), 10) || 0;
+
+    if (!idProduct) {
+      return;
+    }
+
+    block.setAttribute('data-id-product', String(idProduct));
+    block.setAttribute('data-id-product-attribute', String(idPa));
+    fetchLowest(block, idProduct, idPa);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var block = getBlock();
+    if (!block || typeof prestashop === 'undefined') {
+      return;
+    }
+
+    prestashop.on('updatedProduct', onCombinationChange);
+    prestashop.on('updateProduct', onCombinationChange);
+  });
+})();

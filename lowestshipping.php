@@ -1,321 +1,216 @@
 <?php
+
+declare(strict_types=1);
+
 /**
-* 2007-2026 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2026 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+ * 2007-2026 PrestaShop
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0
+ */
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Lowestshipping extends CarrierModule
-{
-    protected $config_form = false;
+use PrestaShop\Module\Lowestshipping\Shipping\LowestShippingEstimator;
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
+
+class Lowestshipping extends Module
+{
     public function __construct()
     {
         $this->name = 'lowestshipping';
         $this->tab = 'shipping_logistics';
-        $this->version = '1.0.0';
+        $this->version = '2.0.0';
         $this->author = 'Maxsoft';
         $this->need_instance = 0;
-
-        /**
-         * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
-         */
         $this->bootstrap = true;
 
         parent::__construct();
 
-        $this->displayName = $this->l('Lowest shipping cost');
-        $this->description = $this->l('The module displays the lowest possible delivery cost for this product on the product card, taking into account as many conditions as possible that may occur in PrestaShop.');
+        $this->displayName = $this->trans('Lowest shipping estimate', [], 'Modules.Lowestshipping.Admin');
+        $this->description = $this->trans(
+            'Shows the lowest deliverable shipping cost for the current product using the shop’s native carrier and cart rules logic.',
+            [],
+            'Modules.Lowestshipping.Admin'
+        );
+        $this->confirmUninstall = $this->trans('Uninstall this module?', [], 'Modules.Lowestshipping.Admin');
 
-        $this->confirmUninstall = $this->l('The module has been Uninstalled');
-
-        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '9.0');
+        $this->ps_versions_compliancy = ['min' => '9.0.0', 'max' => '9.99.99'];
     }
 
-    /**
-     * Don't forget to create update methods if needed:
-     * http://doc.prestashop.com/display/PS16/Enabling+the+Auto-Update
-     */
-    public function install()
+    public function install(): bool
     {
-        if (extension_loaded('curl') == false)
-        {
-            $this->_errors[] = $this->l('You have to enable the cURL extension on your server to install this module');
-            return false;
-        }
+        $defaultCountry = (int) Configuration::get('PS_COUNTRY_DEFAULT');
 
-        $carrier = $this->addCarrier();
-        $this->addZones($carrier);
-        $this->addGroups($carrier);
-        $this->addRanges($carrier);
-        Configuration::updateValue('LOWESTSHIPPING_LIVE_MODE', false);
-
-        return parent::install() &&
-            $this->registerHook('header') &&
-            $this->registerHook('displayBackOfficeHeader') &&
-            $this->registerHook('updateCarrier');
+        return parent::install()
+            && $this->registerHook('displayProductAdditionalInfo')
+            && $this->registerHook('actionFrontControllerSetMedia')
+            && Configuration::updateValue('LOWESTSHIPPING_DEFAULT_COUNTRY', $defaultCountry > 0 ? $defaultCountry : 0)
+            && Configuration::updateValue('LOWESTSHIPPING_PRICE_WITH_TAX', true)
+            && Configuration::updateValue('LOWESTSHIPPING_TEXT_PREFIX', '')
+            && Configuration::updateValue('LOWESTSHIPPING_ENABLE_VISIBILITY_FILTER', false)
+            && Configuration::updateValue('LOWESTSHIPPING_EXCLUDED_PRODUCT_IDS', '')
+            && Configuration::updateValue('LOWESTSHIPPING_EXCLUDED_CATEGORY_IDS', '');
     }
 
-    public function uninstall()
+    public function uninstall(): bool
     {
-        Configuration::deleteByName('LOWESTSHIPPING_LIVE_MODE');
+        Configuration::deleteByName('LOWESTSHIPPING_DEFAULT_COUNTRY');
+        Configuration::deleteByName('LOWESTSHIPPING_PRICE_WITH_TAX');
+        Configuration::deleteByName('LOWESTSHIPPING_TEXT_PREFIX');
+        Configuration::deleteByName('LOWESTSHIPPING_ENABLE_VISIBILITY_FILTER');
+        Configuration::deleteByName('LOWESTSHIPPING_EXCLUDED_PRODUCT_IDS');
+        Configuration::deleteByName('LOWESTSHIPPING_EXCLUDED_CATEGORY_IDS');
 
         return parent::uninstall();
     }
 
-    /**
-     * Load the configuration form
-     */
     public function getContent()
     {
-        /**
-         * If values have been submitted in the form, process.
-         */
-        if (((bool)Tools::isSubmit('submitLowestshippingModule')) == true) {
-            $this->postProcess();
+        $container = SymfonyContainer::getInstance();
+        if ($container === null) {
+            return $this->displayError($this->trans('Symfony container is not available.', [], 'Modules.Lowestshipping.Admin'));
         }
 
-        $this->context->smarty->assign('module_dir', $this->_path);
-
-        $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-
-        return $output.$this->renderForm();
+        $router = $container->get('router');
+        Tools::redirectAdmin($router->generate('lowestshipping_configuration'));
     }
 
-    /**
-     * Create the form that will be displayed in the configuration of your module.
-     */
-    protected function renderForm()
+    public function hookActionFrontControllerSetMedia(array $params): void
     {
-        $helper = new HelperForm();
+        if (!isset($this->context->controller) || $this->context->controller->php_self !== 'product') {
+            return;
+        }
 
-        $helper->show_toolbar = false;
-        $helper->table = $this->table;
-        $helper->module = $this;
-        $helper->default_form_language = $this->context->language->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
-
-        $helper->identifier = $this->identifier;
-        $helper->submit_action = 'submitLowestshippingModule';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-
-        $helper->tpl_vars = array(
-            'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id,
+        $this->context->controller->registerJavascript(
+            'module-lowestshipping-front',
+            'modules/' . $this->name . '/views/js/front.js',
+            ['position' => 'bottom', 'priority' => 200]
         );
-
-        return $helper->generateForm(array($this->getConfigForm()));
-    }
-
-    /**
-     * Create the structure of your form.
-     */
-    protected function getConfigForm()
-    {
-        return array(
-            'form' => array(
-                'legend' => array(
-                'title' => $this->l('Settings'),
-                'icon' => 'icon-cogs',
-                ),
-                'input' => array(
-                    array(
-                        'type' => 'switch',
-                        'label' => $this->l('Live mode'),
-                        'name' => 'LOWESTSHIPPING_LIVE_MODE',
-                        'is_bool' => true,
-                        'desc' => $this->l('Use this module in live mode'),
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => $this->l('Enabled')
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => $this->l('Disabled')
-                            )
-                        ),
-                    ),
-                    array(
-                        'col' => 3,
-                        'type' => 'text',
-                        'prefix' => '<i class="icon icon-envelope"></i>',
-                        'desc' => $this->l('Enter a valid email address'),
-                        'name' => 'LOWESTSHIPPING_ACCOUNT_EMAIL',
-                        'label' => $this->l('Email'),
-                    ),
-                    array(
-                        'type' => 'password',
-                        'name' => 'LOWESTSHIPPING_ACCOUNT_PASSWORD',
-                        'label' => $this->l('Password'),
-                    ),
-                ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
-                ),
-            ),
+        $this->context->controller->registerStylesheet(
+            'module-lowestshipping-front',
+            'modules/' . $this->name . '/views/css/front.css',
+            ['media' => 'all', 'priority' => 200]
         );
     }
 
-    /**
-     * Set values for the inputs.
-     */
-    protected function getConfigFormValues()
+    public function hookDisplayProductAdditionalInfo(array $params): string
     {
-        return array(
-            'LOWESTSHIPPING_LIVE_MODE' => Configuration::get('LOWESTSHIPPING_LIVE_MODE', true),
-            'LOWESTSHIPPING_ACCOUNT_EMAIL' => Configuration::get('LOWESTSHIPPING_ACCOUNT_EMAIL', 'contact@prestashop.com'),
-            'LOWESTSHIPPING_ACCOUNT_PASSWORD' => Configuration::get('LOWESTSHIPPING_ACCOUNT_PASSWORD', null),
-        );
-    }
-
-    /**
-     * Save form data.
-     */
-    protected function postProcess()
-    {
-        $form_values = $this->getConfigFormValues();
-
-        foreach (array_keys($form_values) as $key) {
-            Configuration::updateValue($key, Tools::getValue($key));
-        }
-    }
-
-    public function getOrderShippingCost($params, $shipping_cost)
-    {
-        if (Context::getContext()->customer->logged == true)
-        {
-            $id_address_delivery = Context::getContext()->cart->id_address_delivery;
-            $address = new Address($id_address_delivery);
-
-            /**
-             * Send the details through the API
-             * Return the price sent by the API
-             */
-            return 10;
+        if (!isset($this->context->controller) || $this->context->controller->php_self !== 'product') {
+            return '';
         }
 
-        return $shipping_cost;
+        $idProduct = $this->extractProductId($params);
+        if ($idProduct <= 0) {
+            return '';
+        }
+
+        if ($this->shouldHideForProduct($idProduct)) {
+            return '';
+        }
+
+        $idProductAttribute = (int) Tools::getValue('id_product_attribute');
+        if ($idProductAttribute <= 0) {
+            $idProductAttribute = (int) Product::getDefaultAttribute($idProduct);
+        }
+
+        $defaultCountry = (int) Configuration::get('LOWESTSHIPPING_DEFAULT_COUNTRY');
+        $withTax = (bool) Configuration::get('LOWESTSHIPPING_PRICE_WITH_TAX');
+        $prefix = (string) Configuration::get('LOWESTSHIPPING_TEXT_PREFIX');
+
+        $estimator = new LowestShippingEstimator();
+        $price = $estimator->estimate($this->context, $idProduct, $idProductAttribute, $defaultCountry, $withTax);
+
+        if ($price === null) {
+            return '';
+        }
+
+        $formatted = Tools::displayPrice($price, $this->context->currency);
+
+        $this->context->smarty->assign([
+            'lowestshipping_prefix' => $prefix,
+            'lowestshipping_formatted' => $formatted,
+            'lowestshipping_price' => $price,
+            'lowestshipping_id_product' => $idProduct,
+            'lowestshipping_id_product_attribute' => $idProductAttribute,
+            'lowestshipping_ajax_url' => $this->context->link->getModuleLink('lowestshipping', 'ajax', [], true),
+            'lowestshipping_token' => Tools::getToken(false),
+        ]);
+
+        return $this->fetch('module:lowestshipping/views/templates/hook/displayProductAdditionalInfo.tpl');
     }
 
-    public function getOrderShippingCostExternal($params)
+    private function extractProductId(array $params): int
     {
-        return true;
+        if (isset($params['product'])) {
+            $p = $params['product'];
+            if (is_array($p) && isset($p['id'])) {
+                return (int) $p['id'];
+            }
+            if (is_array($p) && isset($p['id_product'])) {
+                return (int) $p['id_product'];
+            }
+            if (is_object($p) && isset($p->id_product)) {
+                return (int) $p->id_product;
+            }
+            if (is_object($p) && method_exists($p, 'getId')) {
+                return (int) $p->getId();
+            }
+        }
+
+        return (int) Tools::getValue('id_product');
     }
 
-    protected function addCarrier()
+    public function isEstimateHiddenForProduct(int $idProduct): bool
     {
-        $carrier = new Carrier();
+        return $this->shouldHideForProduct($idProduct);
+    }
 
-        $carrier->name = $this->l('My super carrier');
-        $carrier->is_module = true;
-        $carrier->active = 1;
-        $carrier->range_behavior = 1;
-        $carrier->need_range = 1;
-        $carrier->shipping_external = true;
-        $carrier->range_behavior = 0;
-        $carrier->external_module_name = $this->name;
-        $carrier->shipping_method = 2;
+    private function shouldHideForProduct(int $idProduct): bool
+    {
+        if (!(bool) Configuration::get('LOWESTSHIPPING_ENABLE_VISIBILITY_FILTER')) {
+            return false;
+        }
 
-        foreach (Language::getLanguages() as $lang)
-            $carrier->delay[$lang['id_lang']] = $this->l('Super fast delivery');
+        $excludedProducts = (string) Configuration::get('LOWESTSHIPPING_EXCLUDED_PRODUCT_IDS');
+        $productIds = $this->parseIdList($excludedProducts);
+        if (in_array($idProduct, $productIds, true)) {
+            return true;
+        }
 
-        if ($carrier->add() == true)
-        {
-            @copy(dirname(__FILE__).'/views/img/carrier_image.jpg', _PS_SHIP_IMG_DIR_.'/'.(int)$carrier->id.'.jpg');
-            Configuration::updateValue('MYSHIPPINGMODULE_CARRIER_ID', (int)$carrier->id);
-            return $carrier;
+        $excludedCategories = (string) Configuration::get('LOWESTSHIPPING_EXCLUDED_CATEGORY_IDS');
+        $categoryIds = $this->parseIdList($excludedCategories);
+        if ($categoryIds === []) {
+            return false;
+        }
+
+        $productCategories = Product::getProductCategories($idProduct);
+        foreach ($productCategories as $cid) {
+            if (in_array((int) $cid, $categoryIds, true)) {
+                return true;
+            }
         }
 
         return false;
     }
 
-    protected function addGroups($carrier)
-    {
-        $groups_ids = array();
-        $groups = Group::getGroups(Context::getContext()->language->id);
-        foreach ($groups as $group)
-            $groups_ids[] = $group['id_group'];
-
-        $carrier->setGroups($groups_ids);
-    }
-
-    protected function addRanges($carrier)
-    {
-        $range_price = new RangePrice();
-        $range_price->id_carrier = $carrier->id;
-        $range_price->delimiter1 = '0';
-        $range_price->delimiter2 = '10000';
-        $range_price->add();
-
-        $range_weight = new RangeWeight();
-        $range_weight->id_carrier = $carrier->id;
-        $range_weight->delimiter1 = '0';
-        $range_weight->delimiter2 = '10000';
-        $range_weight->add();
-    }
-
-    protected function addZones($carrier)
-    {
-        $zones = Zone::getZones();
-
-        foreach ($zones as $zone)
-            $carrier->addZone($zone['id_zone']);
-    }
-
     /**
-    * Add the CSS & JavaScript files you want to be loaded in the BO.
-    */
-    public function hookDisplayBackOfficeHeader()
-    {
-        if (Tools::getValue('configure') == $this->name) {
-            $this->context->controller->addJS($this->_path.'views/js/back.js');
-            $this->context->controller->addCSS($this->_path.'views/css/back.css');
-        }
-    }
-
-    /**
-     * Add the CSS & JavaScript files you want to be added on the FO.
+     * @return int[]
      */
-    public function hookHeader()
+    private function parseIdList(string $raw): array
     {
-        $this->context->controller->addJS($this->_path.'/views/js/front.js');
-        $this->context->controller->addCSS($this->_path.'/views/css/front.css');
-    }
+        $parts = preg_split('/[\s,;]+/', $raw, -1, PREG_SPLIT_NO_EMPTY);
+        if ($parts === false) {
+            return [];
+        }
 
-    public function hookUpdateCarrier($params)
-    {
-        /**
-         * Not needed since 1.5
-         * You can identify the carrier by the id_reference
-        */
+        return array_values(array_unique(array_filter(array_map('intval', $parts))));
     }
 }

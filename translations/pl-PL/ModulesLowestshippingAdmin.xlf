@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="admin" source-language="en-US" target-language="pl-PL" datatype="plaintext">
+    <body>
+      <trans-unit id="lowestshipping.admin.display_name">
+        <source>Lowest shipping estimate</source>
+        <target>Szacunek najtańszej dostawy</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.description">
+        <source>Shows the lowest deliverable shipping cost for the current product using the shop’s native carrier and cart rules logic.</source>
+        <target>Pokazuje najniższy możliwy koszt dostawy dla produktu, z użyciem natywnej logiki przewoźników i koszyka PrestaShop.</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.uninstall">
+        <source>Uninstall this module?</source>
+        <target>Odinstalować ten moduł?</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.no_symfony">
+        <source>Symfony container is not available.</source>
+        <target>Kontener Symfony jest niedostępny.</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.settings_title">
+        <source>Lowest shipping on product page</source>
+        <target>Najtańsza dostawa na karcie produktu</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.settings_updated">
+        <source>Settings updated.</source>
+        <target>Ustawienia zapisane.</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.default_country">
+        <source>Default country (guests)</source>
+        <target>Domyślny kraj (goście)</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.default_country_help">
+        <source>Used when the customer is not logged in or has no delivery address.</source>
+        <target>Używany, gdy klient nie jest zalogowany lub nie ma adresu dostawy.</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.price_with_tax">
+        <source>Display price with tax</source>
+        <target>Pokaż cenę z podatkiem</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.text_prefix">
+        <source>Text prefix</source>
+        <target>Prefiks tekstu</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.text_prefix_help">
+        <source>Example: "From " or "Cheapest delivery: "</source>
+        <target>Przykład: „Od ” lub „Najtańsza dostawa: ”</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.visibility">
+        <source>Limit display to allowed products/categories</source>
+        <target>Ogranicz widoczność (produkty/kategorie)</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.visibility_help">
+        <source>When enabled, the block is hidden for products or categories listed below.</source>
+        <target>Po włączeniu blok jest ukrywany dla produktów i kategorii z listy poniżej.</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.excluded_products">
+        <source>Excluded product IDs</source>
+        <target>Wykluczone ID produktów</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.excluded_products_help">
+        <source>Comma or space separated (e.g. 12, 34). Only used when the option above is enabled.</source>
+        <target>Oddzielone przecinkiem lub spacją (np. 12, 34). Działa tylko przy włączonej opcji powyżej.</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.excluded_categories">
+        <source>Excluded category IDs</source>
+        <target>Wykluczone ID kategorii</target>
+      </trans-unit>
+      <trans-unit id="lowestshipping.admin.excluded_categories_help">
+        <source>Comma or space separated. Only used when the option above is enabled.</source>
+        <target>Oddzielone przecinkiem lub spacją. Działa tylko przy włączonej opcji powyżej.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

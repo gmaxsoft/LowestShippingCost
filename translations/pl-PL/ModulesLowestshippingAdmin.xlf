@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="admin" source-language="en-US" target-language="pl-PL" datatype="plaintext">
+  <file original="ModulesLowestshippingAdmin" source-language="en-US" target-language="pl-PL" datatype="plaintext">
     <body>
       <trans-unit id="lowestshipping.admin.display_name">
         <source>Lowest shipping estimate</source>
@@ -8,7 +8,7 @@
       </trans-unit>
       <trans-unit id="lowestshipping.admin.description">
         <source>Shows the lowest deliverable shipping cost for the current product using the shop’s native carrier and cart rules logic.</source>
-        <target>Pokazuje najniższy możliwy koszt dostawy dla produktu, z użyciem natywnej logiki przewoźników i koszyka PrestaShop.</target>
+        <target>Pokazuje najniższy możliwy koszt dostawy z użyciem natywnych przewoźników i reguł koszyka PrestaShop.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.uninstall">
         <source>Uninstall this module?</source>
@@ -26,49 +26,49 @@
         <source>Settings updated.</source>
         <target>Ustawienia zapisane.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.default_country">
-        <source>Default country (guests)</source>
-        <target>Domyślny kraj (goście)</target>
+      <trans-unit id="lowestshipping.admin.default_country_shipping">
+        <source>Default country for shipping estimate</source>
+        <target>Domyślny kraj do szacunku dostawy</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.default_country_help">
-        <source>Used when the customer is not logged in or has no delivery address.</source>
-        <target>Używany, gdy klient nie jest zalogowany lub nie ma adresu dostawy.</target>
+      <trans-unit id="lowestshipping.admin.default_country_shipping_help">
+        <source>Used for guests and for customers without a delivery address.</source>
+        <target>Dla gości oraz klientów bez zapisanego adresu dostawy.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.price_with_tax">
-        <source>Display price with tax</source>
-        <target>Pokaż cenę z podatkiem</target>
+      <trans-unit id="lowestshipping.admin.show_cost_tax">
+        <source>Show cost including tax</source>
+        <target>Pokazuj koszt z podatkiem</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.text_prefix">
-        <source>Text prefix</source>
-        <target>Prefiks tekstu</target>
+      <trans-unit id="lowestshipping.admin.price_prefix">
+        <source>Price prefix</source>
+        <target>Prefiks przed ceną</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.text_prefix_help">
+      <trans-unit id="lowestshipping.admin.price_prefix_help">
         <source>Example: "From " or "Cheapest delivery: "</source>
         <target>Przykład: „Od ” lub „Najtańsza dostawa: ”</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.visibility">
-        <source>Limit display to allowed products/categories</source>
-        <target>Ogranicz widoczność (produkty/kategorie)</target>
+      <trans-unit id="lowestshipping.admin.extra_under_price">
+        <source>Extra text under the price</source>
+        <target>Dodatkowy opis pod ceną</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.visibility_help">
-        <source>When enabled, the block is hidden for products or categories listed below.</source>
-        <target>Po włączeniu blok jest ukrywany dla produktów i kategorii z listy poniżej.</target>
+      <trans-unit id="lowestshipping.admin.extra_under_price_help">
+        <source>Optional note shown below the shipping price on the product page.</source>
+        <target>Opcjonalna notka pod ceną dostawy na stronie produktu.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.excluded_products">
-        <source>Excluded product IDs</source>
-        <target>Wykluczone ID produktów</target>
+      <trans-unit id="lowestshipping.admin.show_on_product">
+        <source>Show block on product page</source>
+        <target>Włącz na karcie produktu</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.excluded_products_help">
-        <source>Comma or space separated (e.g. 12, 34). Only used when the option above is enabled.</source>
-        <target>Oddzielone przecinkiem lub spacją (np. 12, 34). Działa tylko przy włączonej opcji powyżej.</target>
+      <trans-unit id="lowestshipping.admin.show_on_product_help">
+        <source>Turn off to hide the estimate everywhere on product pages.</source>
+        <target>Wyłączenie ukrywa blok na wszystkich kartach produktów.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.excluded_categories">
-        <source>Excluded category IDs</source>
-        <target>Wykluczone ID kategorii</target>
+      <trans-unit id="lowestshipping.admin.error_select_country">
+        <source>Please select a default country.</source>
+        <target>Wybierz domyślny kraj.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.excluded_categories_help">
-        <source>Comma or space separated. Only used when the option above is enabled.</source>
-        <target>Oddzielone przecinkiem lub spacją. Działa tylko przy włączonej opcji powyżej.</target>
+      <trans-unit id="lowestshipping.admin.error_invalid_payload">
+        <source>The submitted data is invalid.</source>
+        <target>Przesłane dane są nieprawidłowe.</target>
       </trans-unit>
     </body>
   </file>

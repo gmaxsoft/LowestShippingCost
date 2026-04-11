@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="admin" source-language="en-US" target-language="en-US" datatype="plaintext">
+  <file original="ModulesLowestshippingAdmin" source-language="en-US" target-language="en-US" datatype="plaintext">
     <body>
       <trans-unit id="lowestshipping.admin.display_name">
         <source>Lowest shipping estimate</source>
@@ -26,49 +26,49 @@
         <source>Settings updated.</source>
         <target>Settings updated.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.default_country">
-        <source>Default country (guests)</source>
-        <target>Default country (guests)</target>
+      <trans-unit id="lowestshipping.admin.default_country_shipping">
+        <source>Default country for shipping estimate</source>
+        <target>Default country for shipping estimate</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.default_country_help">
-        <source>Used when the customer is not logged in or has no delivery address.</source>
-        <target>Used when the customer is not logged in or has no delivery address.</target>
+      <trans-unit id="lowestshipping.admin.default_country_shipping_help">
+        <source>Used for guests and for customers without a delivery address.</source>
+        <target>Used for guests and for customers without a delivery address.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.price_with_tax">
-        <source>Display price with tax</source>
-        <target>Display price with tax</target>
+      <trans-unit id="lowestshipping.admin.show_cost_tax">
+        <source>Show cost including tax</source>
+        <target>Show cost including tax</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.text_prefix">
-        <source>Text prefix</source>
-        <target>Text prefix</target>
+      <trans-unit id="lowestshipping.admin.price_prefix">
+        <source>Price prefix</source>
+        <target>Price prefix</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.text_prefix_help">
+      <trans-unit id="lowestshipping.admin.price_prefix_help">
         <source>Example: "From " or "Cheapest delivery: "</source>
         <target>Example: "From " or "Cheapest delivery: "</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.visibility">
-        <source>Limit display to allowed products/categories</source>
-        <target>Limit display to allowed products/categories</target>
+      <trans-unit id="lowestshipping.admin.extra_under_price">
+        <source>Extra text under the price</source>
+        <target>Extra text under the price</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.visibility_help">
-        <source>When enabled, the block is hidden for products or categories listed below.</source>
-        <target>When enabled, the block is hidden for products or categories listed below.</target>
+      <trans-unit id="lowestshipping.admin.extra_under_price_help">
+        <source>Optional note shown below the shipping price on the product page.</source>
+        <target>Optional note shown below the shipping price on the product page.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.excluded_products">
-        <source>Excluded product IDs</source>
-        <target>Excluded product IDs</target>
+      <trans-unit id="lowestshipping.admin.show_on_product">
+        <source>Show block on product page</source>
+        <target>Show block on product page</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.excluded_products_help">
-        <source>Comma or space separated (e.g. 12, 34). Only used when the option above is enabled.</source>
-        <target>Comma or space separated (e.g. 12, 34). Only used when the option above is enabled.</target>
+      <trans-unit id="lowestshipping.admin.show_on_product_help">
+        <source>Turn off to hide the estimate everywhere on product pages.</source>
+        <target>Turn off to hide the estimate everywhere on product pages.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.excluded_categories">
-        <source>Excluded category IDs</source>
-        <target>Excluded category IDs</target>
+      <trans-unit id="lowestshipping.admin.error_select_country">
+        <source>Please select a default country.</source>
+        <target>Please select a default country.</target>
       </trans-unit>
-      <trans-unit id="lowestshipping.admin.excluded_categories_help">
-        <source>Comma or space separated. Only used when the option above is enabled.</source>
-        <target>Comma or space separated. Only used when the option above is enabled.</target>
+      <trans-unit id="lowestshipping.admin.error_invalid_payload">
+        <source>The submitted data is invalid.</source>
+        <target>The submitted data is invalid.</target>
       </trans-unit>
     </body>
   </file>

@@ -37,7 +37,7 @@ final class LowestShippingConfigurationFormType extends TranslatorAwareType
             ])
             ->add('text_prefix', TextType::class, [
                 'label' => $this->trans('Price prefix', [], 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Example: “From ” or “Cheapest delivery: ”', [], 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Example: "From " or "Cheapest delivery: "', [], 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ])
             ->add('description', TextareaType::class, [

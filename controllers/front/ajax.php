@@ -8,8 +8,6 @@ declare(strict_types=1);
  * @license https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0
  */
 
-use PrestaShop\Module\Lowestshipping\Shipping\LowestShippingEstimator;
-
 class LowestshippingAjaxModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
@@ -41,41 +39,32 @@ class LowestshippingAjaxModuleFrontController extends ModuleFrontController
         if (!$module instanceof Lowestshipping || !$module->isProductPageEstimateEnabled()) {
             $this->ajaxRender(json_encode([
                 'success' => true,
+                'available' => false,
                 'formatted_price' => '',
+                'hint' => '',
+                'carrier_line' => '',
                 'prefix' => '',
+                'description' => '',
             ]));
 
             return;
         }
 
-        $defaultCountry = (int) Configuration::get('LOWESTSHIPPING_DEFAULT_COUNTRY');
-        $withTax = (bool) Configuration::get('LOWESTSHIPPING_PRICE_WITH_TAX');
         $prefix = (string) Configuration::get('LOWESTSHIPPING_TEXT_PREFIX');
+        $description = (string) Configuration::get('LOWESTSHIPPING_DESCRIPTION');
 
-        $estimator = new LowestShippingEstimator();
-        $price = $estimator->estimate(
-            $this->context,
-            $idProduct,
-            $idProductAttribute,
-            $defaultCountry,
-            $withTax
-        );
-
-        if ($price === null) {
-            $this->ajaxRender(json_encode([
-                'success' => true,
-                'formatted_price' => '',
-                'prefix' => $prefix,
-            ]));
-
-            return;
-        }
+        $row = $module->getProductShippingEstimate($idProduct, $idProductAttribute);
 
         $this->ajaxRender(json_encode([
             'success' => true,
-            'price' => $price,
-            'formatted_price' => Tools::displayPrice($price, $this->context->currency),
+            'available' => $row['available'],
+            'price' => $row['price'],
+            'formatted_price' => $row['formatted_price'],
+            'hint' => $row['hint_message'],
+            'carrier_line' => $row['carrier_line'],
+            'is_free_shipping' => $row['is_free_shipping'],
             'prefix' => $prefix,
+            'description' => $description,
         ]));
     }
 }

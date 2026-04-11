@@ -1,0 +1,28 @@
+/**
+ * lowestshipping — karta produktu
+ */
+.lowest-shipping-box {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.lowest-shipping-main {
+  margin: 0 0 0.25rem 0;
+}
+
+.lowest-shipping-prefix {
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
+
+.lowest-shipping-desc,
+.lowest-shipping-carrier {
+  display: block;
+  margin-top: 0.2rem;
+  color: #666;
+  font-size: 0.85em;
+}
+
+.lowest-shipping-carrier {
+  color: #555;
+}

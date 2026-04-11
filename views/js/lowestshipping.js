@@ -1,5 +1,5 @@
 /**
- * 2007-2026 PrestaShop — lowestshipping
+ * lowestshipping — dynamiczna aktualizacja po zmianie kombinacji (PrestaShop 9).
  * @license AFL-3.0
  */
 (function () {
@@ -7,6 +7,20 @@
 
   function getBlock() {
     return document.getElementById('lowestshipping-product-block');
+  }
+
+  function setCarrierLine(block, text, visible) {
+    var el = block.querySelector('#lowest-shipping-carrier');
+    if (!el) {
+      return;
+    }
+    if (visible && text) {
+      el.textContent = text;
+      el.style.display = '';
+    } else {
+      el.textContent = '';
+      el.style.display = 'none';
+    }
   }
 
   function fetchLowest(block, idProduct, idProductAttribute) {
@@ -42,19 +56,29 @@
         if (!data || !data.success) {
           return;
         }
-        var priceEl = block.querySelector('#lowest-shipping-price');
+
         var prefixEl = block.querySelector('.lowest-shipping-prefix');
+        var priceEl = block.querySelector('#lowest-shipping-price');
+
         if (prefixEl && typeof data.prefix === 'string') {
           prefixEl.textContent = data.prefix;
         }
+
         if (priceEl) {
-          priceEl.innerHTML = data.formatted_price || '';
+          if (data.available && data.formatted_price) {
+            priceEl.innerHTML = data.formatted_price;
+          } else if (data.hint) {
+            priceEl.textContent = data.hint;
+          } else {
+            priceEl.innerHTML = '';
+          }
         }
-        if (!data.formatted_price) {
-          block.style.display = 'none';
-        } else {
-          block.style.display = '';
-        }
+
+        setCarrierLine(block, data.carrier_line || '', !!(data.available && data.carrier_line));
+
+        var show =
+          (data.available && !!data.formatted_price) || (!!data.hint && !data.available);
+        block.style.display = show ? '' : 'none';
       })
       .catch(function () {});
   }

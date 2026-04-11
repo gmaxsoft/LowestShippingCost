@@ -91,13 +91,13 @@ class Lowestshipping extends Module
         }
 
         $this->context->controller->registerJavascript(
-            'module-lowestshipping-front',
-            'modules/' . $this->name . '/views/js/front.js',
+            'module-lowestshipping',
+            'modules/' . $this->name . '/views/js/lowestshipping.js',
             ['position' => 'bottom', 'priority' => 200]
         );
         $this->context->controller->registerStylesheet(
-            'module-lowestshipping-front',
-            'modules/' . $this->name . '/views/css/front.css',
+            'module-lowestshipping',
+            'modules/' . $this->name . '/views/css/lowestshipping.css',
             ['media' => 'all', 'priority' => 200]
         );
     }
@@ -148,7 +148,42 @@ class Lowestshipping extends Module
             'lowestshipping_token' => Tools::getToken(false),
         ]);
 
-        return $this->fetch('module:lowestshipping/views/templates/hook/displayProductAdditionalInfo.tpl');
+        return $this->fetch('module:lowestshipping/views/templates/hook/displayproductadditionalinfo.tpl');
+    }
+
+    /**
+     * Wynik kalkulacji dla żądań AJAX (kombinacje).
+     *
+     * @return array{
+     *   available: bool,
+     *   price: float|null,
+     *   formatted_price: string,
+     *   carrier_name: string,
+     *   carrier_line: string,
+     *   is_free_shipping: bool,
+     *   hint_message: string
+     * }
+     */
+    public function getProductShippingEstimate(int $idProduct, int $idProductAttribute): array
+    {
+        $product = new Product($idProduct, false, $this->context->language->id, $this->context->shop->id);
+        if (!Validate::isLoadedObject($product) || $product->is_virtual) {
+            return [
+                'available' => false,
+                'price' => null,
+                'formatted_price' => '',
+                'carrier_name' => '',
+                'carrier_line' => '',
+                'is_free_shipping' => false,
+                'hint_message' => '',
+            ];
+        }
+
+        return $this->getLowestShippingCost(
+            $product,
+            $idProductAttribute > 0 ? $idProductAttribute : null,
+            1
+        );
     }
 
     /**

@@ -14,7 +14,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use PrestaShop\Module\Lowestshipping\Hook\ProductAdditionalInfoHookGate;
 use PrestaShop\Module\Lowestshipping\Shipping\LowestShippingEstimator;
+use PrestaShop\Module\Lowestshipping\Shipping\LowestShippingQuoteBuilder;
+use PrestaShop\Module\Lowestshipping\Shipping\LowestShippingUnavailableHints;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
@@ -104,16 +107,17 @@ class Lowestshipping extends Module
 
     public function hookDisplayProductAdditionalInfo(array $params): string
     {
-        if (!isset($this->context->controller) || $this->context->controller->php_self !== 'product') {
+        $controller = $this->context->controller ?? null;
+        if (!ProductAdditionalInfoHookGate::passesController($controller)) {
             return '';
         }
 
-        if (!(bool) Configuration::get('LOWESTSHIPPING_ENABLE_PRODUCT_PAGE')) {
+        if (!ProductAdditionalInfoHookGate::passesModuleEnabled((bool) Configuration::get('LOWESTSHIPPING_ENABLE_PRODUCT_PAGE'))) {
             return '';
         }
 
         $idProduct = $this->extractProductId($params);
-        if ($idProduct <= 0) {
+        if (!ProductAdditionalInfoHookGate::passesProductId($idProduct)) {
             return '';
         }
 
@@ -123,7 +127,7 @@ class Lowestshipping extends Module
         }
 
         $product = new Product($idProduct, false, $this->context->language->id, $this->context->shop->id);
-        if (!Validate::isLoadedObject($product) || $product->is_virtual) {
+        if (!ProductAdditionalInfoHookGate::passesProductLoaded(Validate::isLoadedObject($product), (bool) $product->is_virtual)) {
             return '';
         }
 
@@ -224,26 +228,18 @@ class Lowestshipping extends Module
                 ? $this->trans('Carrier: %carrier%', ['%carrier%' => $raw['carrier_name']], 'Modules.Lowestshipping.Shop')
                 : '';
 
-            return [
-                'available' => true,
-                'price' => (float) $raw['price'],
-                'formatted_price' => Tools::displayPrice((float) $raw['price'], $this->context->currency),
-                'carrier_name' => (string) $raw['carrier_name'],
-                'is_free_shipping' => (bool) $raw['is_free_shipping'],
-                'carrier_line' => $carrierLine,
-                'hint_message' => '',
-            ];
+            return LowestShippingQuoteBuilder::buildAvailableRow(
+                (float) $raw['price'],
+                Tools::displayPrice((float) $raw['price'], $this->context->currency),
+                (string) $raw['carrier_name'],
+                (bool) $raw['is_free_shipping'],
+                $carrierLine
+            );
         }
 
-        return [
-            'available' => false,
-            'price' => null,
-            'formatted_price' => '',
-            'carrier_name' => '',
-            'is_free_shipping' => false,
-            'carrier_line' => '',
-            'hint_message' => $this->buildShippingUnavailableHint((string) ($raw['reason'] ?? ''), $id, $attr, $quantity, $defaultCountry, $withTax),
-        ];
+        return LowestShippingQuoteBuilder::unavailableWithHint(
+            $this->buildShippingUnavailableHint((string) ($raw['reason'] ?? ''), $id, $attr, $quantity, $defaultCountry, $withTax)
+        );
     }
 
     private function buildShippingUnavailableHint(
@@ -254,14 +250,10 @@ class Lowestshipping extends Module
         int $defaultCountry,
         bool $withTax
     ): string {
-        if ($reason === 'virtual' || $reason === 'invalid_product') {
-            return '';
-        }
+        $noCarriers = $this->trans('No delivery option is available for this product at the moment.', [], 'Modules.Lowestshipping.Shop');
+        $checkout = $this->trans('Shipping cost will be calculated at checkout.', [], 'Modules.Lowestshipping.Shop');
 
-        if ($reason === 'no_carriers' || $reason === 'cart_error') {
-            return $this->trans('No delivery option is available for this product at the moment.', [], 'Modules.Lowestshipping.Shop');
-        }
-
+        $shippingFrom = null;
         if ($reason === 'no_address') {
             $fallback = (new LowestShippingEstimator())->estimate(
                 $this->context,
@@ -272,17 +264,15 @@ class Lowestshipping extends Module
                 $quantity
             );
             if ($fallback !== null) {
-                return $this->trans(
+                $shippingFrom = $this->trans(
                     'Shipping from %price%',
                     ['%price%' => Tools::displayPrice($fallback, $this->context->currency)],
                     'Modules.Lowestshipping.Shop'
                 );
             }
-
-            return $this->trans('Shipping cost will be calculated at checkout.', [], 'Modules.Lowestshipping.Shop');
         }
 
-        return $this->trans('Shipping cost will be calculated at checkout.', [], 'Modules.Lowestshipping.Shop');
+        return LowestShippingUnavailableHints::resolve($reason, $noCarriers, $checkout, $shippingFrom);
     }
 
     private function extractProductId(array $params): int

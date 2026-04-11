@@ -44,4 +44,4 @@ Dostępne pola:
 
 ## Licencja
 
-AFL-3.0 (zgodnie z nagłówkami w plikach modułu).
+[MIT](LICENSE) — Copyright (c) 2026 Maxsoft.

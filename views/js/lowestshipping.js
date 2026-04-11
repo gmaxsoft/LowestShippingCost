@@ -1,6 +1,7 @@
 /**
  * lowestshipping — dynamiczna aktualizacja po zmianie kombinacji (PrestaShop 9).
- * @license AFL-3.0
+ * @author Maxsoft
+ * @license MIT
  */
 (function () {
   'use strict';

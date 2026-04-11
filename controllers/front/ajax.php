@@ -5,7 +5,8 @@ declare(strict_types=1);
 /**
  * 2007-2026 PrestaShop
  *
- * @license https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0
+ * @author   Maxsoft
+ * @license  https://opensource.org/licenses/MIT MIT License
  */
 
 class LowestshippingAjaxModuleFrontController extends ModuleFrontController

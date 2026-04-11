@@ -6,8 +6,8 @@ declare(strict_types=1);
  * 2007-2026 PrestaShop
  *
  * @author    Maxsoft
- * @copyright 2007-2026
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0
+ * @copyright 2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
  */
 
 if (!defined('_PS_VERSION_')) {

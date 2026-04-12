@@ -42,6 +42,36 @@ Dostępne pola:
 - Pełna zgodność z każdą regułą koszyka „darmowa dostawa” zależy od tego, czy reguła jest automatycznie dodawana do koszyka symulacji (jak w checkout).
 - Szablon karty produktu to **Smarty** (standard FO PrestaShop); rozszerzenie `.tpl` przy nazwie pliku jest wymagane przez `Module::fetch()`.
 
+## Testy
+
+[![PHPUnit](https://github.com/OWNER/REPO/actions/workflows/phpunit.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/phpunit.yml)
+
+W katalogu modułu (pakiety `require-dev`, w tym PHPUnit, instaluje się domyślnie):
+
+```bash
+composer install
+```
+
+Skrót (wszystkie zestawy zdefiniowane w `phpunit.xml.dist`):
+
+```bash
+composer test
+```
+
+Testy jednostkowe:
+
+```bash
+./vendor/bin/phpunit -c phpunit.xml.dist --testsuite Unit
+```
+
+Testy integracyjne (wymagają działającej bazy oraz kopii modułu w `{PRESTASHOP_ROOT}/modules/lowestshipping/`; przed uruchomieniem ustaw zmienną środowiskową `PRESTASHOP_ROOT` na katalog sklepu z plikiem `config/config.inc.php`):
+
+```bash
+./vendor/bin/phpunit -c phpunit.xml.dist --testsuite Integration
+```
+
+W powyższym badge należy zamienić `OWNER/REPO` na właściwą ścieżkę repozytorium GitHub.
+
 ## Licencja
 
 [MIT](LICENSE) — Copyright (c) 2026 Maxsoft.

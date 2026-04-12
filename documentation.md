@@ -106,83 +106,51 @@ W aktualnej implementacji hook i AJAX przekazują **`quantity = 1`** do `getLowe
 
 ## 4. Struktura folderów
 
-Poniżej drzewo **katalogu modułu** (bez `vendor/`, `.git/`, cache PHPUnit). Pliki **`index.php`** w podfolderach — standard PrestaShop (ochrona przed listowaniem katalogów).
+Repozytorium Git zawiera **katalog modułu** `lowestshipping/` (do skopiowania w `modules/lowestshipping/`). W środku modułu nie ma `.git` — metadane CI leżą w korzeniu repozytorium.
+
+Poniżej drzewo **katalogu modułu** (bez `vendor/`, cache PHPUnit / PHP CS Fixer). Pliki **`index.php`** w podfolderach — standard PrestaShop (ochrona przed listowaniem katalogów).
 
 ```text
-lowestshipping/
-├── .github/workflows/phpunit.yml    # CI: PHPUnit (zestaw Unit)
-├── config/
-│   ├── index.php
-│   ├── routes.yml                   # Trasa BO: /lowestshipping/configuration
-│   └── services.yml                 # Rejestracja Controller, Form Type, Handler, DataConfiguration
-├── controllers/
-│   ├── index.php
-│   └── front/
-│       ├── index.php
-│       └── ajax.php                 # ModuleFrontController — JSON (kombinacje), walidacja tokenu
-├── sql/
-│   ├── index.php
-│   ├── install.php                  # Szablon CREATE TABLE (patrz uwaga: install() modułu go nie wywołuje)
-│   └── uninstall.php                # Puste zapytania (placeholder)
-├── src/
-│   ├── index.php
-│   ├── Controller/
-│   │   └── LowestShippingConfigurationController.php   # BO: Symfony controller, #[AdminSecurity], FormHandler
-│   ├── Form/
-│   │   ├── LowestShippingConfigurationFormType.php           # Pola formularza + walidacja NotBlank (kraj)
-│   │   ├── LowestShippingConfigurationDataConfiguration.php   # Odczyt/zapis Configuration + walidacja payloadu
-│   │   └── LowestShippingConfigurationFormDataProvider.php    # Most FormHandler ↔ DataConfiguration
-│   ├── Hook/
-│   │   └── ProductAdditionalInfoHookGate.php   # Warunki wyświetlania bloku na produkcie (testowalne)
-│   └── Shipping/
-│       ├── LowestShippingEstimator.php         # Symulacja Cart + getDeliveryOptionList
-│       ├── LowestShippingCalculator.php        # Wybór najtańszej opcji z listy
-│       ├── LowestShippingQuoteBuilder.php      # Mapowanie na tablicę pod szablon
-│       └── LowestShippingUnavailableHints.php  # Komunikaty przy braku wyceny
-├── tests/
-│   ├── bootstrap.php                # Autoload + opcjonalnie PRESTASHOP_ROOT / stub Carrier
-│   ├── index.php
-│   ├── Integration/
-│   │   └── LowestShippingIntegrationTest.php
-│   └── Unit/                        # Testy jednostkowe (PHPUnit)
-├── translations/
-│   ├── index.php
-│   ├── en-US/ModulesLowestshippingAdmin.xlf
-│   ├── en-US/ModulesLowestshippingShop.xlf
-│   ├── pl-PL/ModulesLowestshippingAdmin.xlf
-│   └── pl-PL/ModulesLowestshippingShop.xlf
-├── upgrade/
-│   ├── index.php
-│   ├── upgrade-1.1.0.php            # Placeholder migracji
-│   └── upgrade-2.1.0.php            # Nowe klucze Configuration, usunięcie starych filtrów widoczności
-├── views/
-│   ├── index.php
-│   ├── css/
-│   │   ├── index.php
-│   │   ├── back.css                 # Style BO (jeśli używane)
-│   │   └── lowestshipping.css       # Style bloku na FO
-│   ├── js/
-│   │   ├── index.php
-│   │   ├── back.js
-│   │   └── lowestshipping.js        # Eventy prestashop + fetch AJAX
-│   ├── img/index.php
-│   └── templates/
-│       ├── index.php
-│       ├── admin/
-│       │   ├── index.php
-│       │   └── configure.html.twig  # Formularz konfiguracji (extends layout BO)
-│       └── hook/
-│           ├── index.php
-│           └── displayproductadditionalinfo.tpl  # Smarty — blok na karcie produktu
-├── composer.json                    # PSR-4 autoload src/, require-dev: phpunit
-├── composer.lock                    # (po composer install)
-├── config.xml                       # Metadane modułu dla Marketplace / legacy
-├── index.php                        # Redirect root modułu
-├── LICENSE                          # MIT
-├── lowestshipping.php               # Główna klasa modułu Module + hooki + logika FO
-├── phpunit.xml.dist                 # Zestawy Unit / Integration
-├── Readme.md                        # Skrócona dokumentacja użytkowa
-└── documentation.md                 # Ten plik
+repozytorium/
+├── .github/workflows/phpunit.yml    # CI: cs-check + PHPUnit (Unit), working-directory: lowestshipping
+├── Readme.md
+├── documentation.md
+└── lowestshipping/                  # kopiuj do modules/lowestshipping/
+    ├── config/
+    │   ├── index.php
+    │   ├── routes.yml
+    │   └── services.yml
+    ├── controllers/
+    │   ├── index.php
+    │   └── front/
+    │       ├── index.php
+    │       └── ajax.php
+    ├── sql/
+    │   ├── index.php
+    │   ├── install.php
+    │   └── uninstall.php
+    ├── src/
+    │   ├── index.php
+    │   ├── Controller/
+    │   ├── Form/
+    │   ├── Hook/
+    │   └── Shipping/
+    ├── tests/
+    │   ├── bootstrap.php
+    │   ├── index.php
+    │   ├── Integration/
+    │   └── Unit/
+    ├── translations/
+    ├── upgrade/
+    ├── views/
+    ├── .php-cs-fixer.dist.php
+    ├── composer.json
+    ├── composer.lock
+    ├── config.xml
+    ├── index.php
+    ├── LICENSE
+    ├── lowestshipping.php
+    └── phpunit.xml.dist
 ```
 
 ---
@@ -336,13 +304,19 @@ Ustawiane w `install()`: kraj = `PS_COUNTRY_DEFAULT` (jeśli > 0), `PRICE_WITH_T
 
 ### 13.1. Wymagania deweloperskie
 
+W klonie repozytorium polecenia Composer i PHPUnit uruchamiaj z katalogu **`lowestshipping/`** (katalog modułu).
+
 ```bash
+cd lowestshipping
 composer install
 ```
+
+Styl kodu: `composer cs-check` / `composer cs-fix` (PHP CS Fixer).
 
 ### 13.2. Testy jednostkowe (Unit)
 
 ```bash
+cd lowestshipping
 ./vendor/bin/phpunit -c phpunit.xml.dist --testsuite Unit
 # lub
 composer test   # uruchamia wszystkie zestawy z phpunit.xml.dist
@@ -356,6 +330,8 @@ composer test   # uruchamia wszystkie zestawy z phpunit.xml.dist
 - Moduł powinien znajdować się w **`{PRESTASHOP_ROOT}/modules/lowestshipping/`**.
 
 ```bash
+cd lowestshipping
+
 # Windows (PowerShell)
 $env:PRESTASHOP_ROOT = "C:\sciezka\do\prestashop"
 ./vendor/bin/phpunit -c phpunit.xml.dist --testsuite Integration
@@ -369,7 +345,7 @@ export PRESTASHOP_ROOT=/ścieżka/do/prestashop
 
 ### 13.4. CI
 
-Workflow **GitHub Actions** (`.github/workflows/phpunit.yml`) uruchamia domyślnie **Unit** (bez pełnego PrestaShop na runnerze).
+Workflow **GitHub Actions** (`.github/workflows/phpunit.yml`) w katalogu **`lowestshipping/`** uruchamia **`composer cs-check`** oraz **PHPUnit — zestaw Unit** (bez pełnego PrestaShop na runnerze).
 
 ---
 

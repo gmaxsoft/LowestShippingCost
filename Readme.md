@@ -6,15 +6,16 @@ Moduł wyświetla na **karcie produktu** szacunek **najniższego kosztu dostawy*
 
 - PrestaShop **9.0+**
 - PHP **8.1+**
-- Composer (tylko do wygenerowania autoloadu w katalogu modułu)
+- Composer (w katalogu **`lowestshipping/`** — autoload i narzędzia dev)
 
 ## Instalacja
 
-1. Skopiuj folder modułu do `modules/lowestshipping/` w katalogu sklepu.
-2. W katalogu modułu uruchom:
+1. Skopiuj folder **`lowestshipping/`** (zawartość repozytorium to katalog modułu) do `modules/lowestshipping/` w katalogu sklepu.
+2. W katalogu modułu (`modules/lowestshipping/`) uruchom:
    ```bash
-   composer dump-autoload -o
+   composer install --no-dev --no-interaction --prefer-dist -o
    ```
+   (w środowisku developerskim z testami: `composer install`.)
 3. W back office: **Moduły → Menedżer modułów** — znajdź **Lowest shipping estimate**, zainstaluj i włącz.
 4. Otwórz **Konfiguruj** — zostaniesz przekierowany na stronę ustawień Symfony.
 
@@ -46,9 +47,10 @@ Dostępne pola:
 
 [![PHPUnit](https://github.com/OWNER/REPO/actions/workflows/phpunit.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/phpunit.yml)
 
-W katalogu modułu (pakiety `require-dev`, w tym PHPUnit, instaluje się domyślnie):
+W klonie repozytorium przejdź do katalogu modułu i zainstaluj zależności:
 
 ```bash
+cd lowestshipping
 composer install
 ```
 
@@ -56,6 +58,13 @@ Skrót (wszystkie zestawy zdefiniowane w `phpunit.xml.dist`):
 
 ```bash
 composer test
+```
+
+Styl kodu (PHP CS Fixer, PER-CS2.0 + reguły phpdoc zbliżone do PSR-5):
+
+```bash
+composer cs-check   # tylko podgląd
+composer cs-fix     # zapis poprawek
 ```
 
 Testy jednostkowe:
@@ -74,4 +83,4 @@ W powyższym badge należy zamienić `OWNER/REPO` na właściwą ścieżkę repo
 
 ## Licencja
 
-[MIT](LICENSE) — Copyright (c) 2026 Maxsoft.
+[MIT](lowestshipping/LICENSE) — Copyright (c) 2026 Maxsoft.

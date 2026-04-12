@@ -1,8 +1,18 @@
 <?php
-
+/**
+ * Conditions for showing the product-page shipping estimate block (testable).
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
 namespace PrestaShop\Module\Lowestshipping\Hook;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Warunki wyświetlenia bloku na karcie produktu (testowalne bez pełnego kontekstu PrestaShop).

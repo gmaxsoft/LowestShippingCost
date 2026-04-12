@@ -17,7 +17,9 @@
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.48",
-    "phpunit/phpunit": "^9.5 || ^10.0"
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^9.5 || ^10.0",
+    "prestashop/php-dev-tools": "^5.0"
   },
   "autoload-dev": {
     "psr-4": {
@@ -26,8 +28,10 @@
   },
   "scripts": {
     "test": "phpunit -c phpunit.xml.dist",
-    "cs-check": "php-cs-fixer fix --dry-run --diff --verbose",
-    "cs-fix": "php-cs-fixer fix --verbose"
+    "cs-check": "php-cs-fixer fix --dry-run --diff --verbose --config=../.php-cs-fixer.dist.php",
+    "cs-fix": "php-cs-fixer fix --verbose --config=../.php-cs-fixer.dist.php",
+    "phpstan": "phpstan analyse -c phpstan.neon --memory-limit=512M",
+    "phpstan:init": "prestashop-coding-standards phpstan:init --dest ."
   },
   "config": {
     "preferred-install": "dist",

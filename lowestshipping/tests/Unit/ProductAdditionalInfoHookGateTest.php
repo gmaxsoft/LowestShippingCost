@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Unit tests for ProductAdditionalInfoHookGate.
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
 namespace Tests\Unit;
@@ -8,6 +14,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Lowestshipping\Hook\ProductAdditionalInfoHookGate;
 use Throwable;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 final class ProductAdditionalInfoHookGateTest extends TestCase
 {
@@ -32,10 +42,10 @@ final class ProductAdditionalInfoHookGateTest extends TestCase
 
     public static function providerKontrolerProduktu(): array
     {
-        $product = new class {
+        $product = new class () {
             public string $php_self = 'product';
         };
-        $home = new class {
+        $home = new class () {
             public string $php_self = 'index';
         };
 

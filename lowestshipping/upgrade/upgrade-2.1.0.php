@@ -1,6 +1,16 @@
 <?php
-
+/**
+ * Upgrade script — lowestshipping module 2.1.0 (configuration keys).
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 if (!function_exists('upgrade_module_2_1_0')) {
     /**

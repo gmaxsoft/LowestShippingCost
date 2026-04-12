@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Simulates a cart to obtain delivery options via native PrestaShop APIs.
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
 namespace PrestaShop\Module\Lowestshipping\Shipping;
@@ -13,6 +19,10 @@ use Country;
 use Product;
 use State;
 use Validate;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Symuluje koszyk (PrestaShop wymaga krótkotrwałego zapisu wiersza Cart w bazie
@@ -57,7 +67,7 @@ final class LowestShippingEstimator
         int $defaultCountryId,
         bool $withTax,
     ): array {
-        $empty = static fn(string $reason): array => [
+        $empty = static fn (string $reason): array => [
             'available' => false,
             'price' => null,
             'carrier_name' => '',
@@ -106,7 +116,7 @@ final class LowestShippingEstimator
             return $empty('cart_error');
         }
 
-        $simCart->updateQty($quantity, $idProduct, $idProductAttribute, null, 'up', (int) $context->shop->id);
+        $simCart->updateQty($quantity, $idProduct, $idProductAttribute, false, 'up', (int) $context->shop->id);
 
         $context->cart = $simCart;
 

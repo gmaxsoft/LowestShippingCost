@@ -1,6 +1,16 @@
 <?php
-
+/**
+ * PHPUnit bootstrap — Composer autoload and optional PrestaShop (PRESTASHOP_ROOT).
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 $autoload = dirname(__DIR__) . '/vendor/autoload.php';
 if (!is_file($autoload)) {

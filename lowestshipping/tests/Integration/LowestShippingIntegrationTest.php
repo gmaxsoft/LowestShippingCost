@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Integration tests against a real PrestaShop (PRESTASHOP_ROOT + config.inc.php).
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
 namespace Tests\Integration;
@@ -15,13 +21,16 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Lowestshipping\Shipping\LowestShippingEstimator;
 use Product;
+use ReflectionClass;
 use Shop;
 use Tools;
 use Validate;
 
-use function array_slice;
-use function count;
-use function defined;
+use const _DB_PREFIX_;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Wymaga uruchomienia z PRESTASHOP_ROOT wskazującym na katalog sklepu (config/config.inc.php).
@@ -32,8 +41,10 @@ final class LowestShippingIntegrationTest extends TestCase
 {
     protected function setUp(): void
     {
-        if (!defined('_PS_VERSION_')) {
-            $this->markTestSkipped('Brak jądra PrestaShop. Ustaw PRESTASHOP_ROOT i uruchom ponownie PHPUnit (bootstrap wczyta config.inc.php).');
+        if (!class_exists(Context::class, false)) {
+            $this->markTestSkipped(
+                'Brak jądra PrestaShop (klasa Context). Ustaw PRESTASHOP_ROOT na katalog sklepu z config/config.inc.php i uruchom PHPUnit ponownie.',
+            );
         }
     }
 
@@ -204,7 +215,9 @@ final class LowestShippingIntegrationTest extends TestCase
 
     private function uzupelnijKontekstMinimalny(): Context
     {
-        $ctx = Context::getContext();
+        $ref = new ReflectionClass('Context');
+        /** @var Context $ctx */
+        $ctx = $ref->getMethod('getContext')->invoke(null);
         $idLang = (int) Configuration::get('PS_LANG_DEFAULT');
         $idShop = (int) Configuration::get('PS_SHOP_DEFAULT');
 
@@ -239,12 +252,7 @@ final class LowestShippingIntegrationTest extends TestCase
 
     private function pierwszyProduktZDwomaKombinacjami(): int
     {
-        $sql = 'SELECT p.id_product FROM ' . _DB_PREFIX_ . 'product p
-            INNER JOIN ' . _DB_PREFIX_ . 'product_attribute pa ON pa.id_product = p.id_product
-            WHERE p.active = 1 AND p.is_virtual = 0
-            GROUP BY p.id_product
-            HAVING COUNT(pa.id_product_attribute) >= 2
-            ORDER BY p.id_product ASC';
+        $sql = 'SELECT p.id_product FROM ' . _DB_PREFIX_ . 'product p INNER JOIN ' . _DB_PREFIX_ . 'product_attribute pa ON pa.id_product = p.id_product WHERE p.active = 1 AND p.is_virtual = 0 GROUP BY p.id_product HAVING COUNT(pa.id_product_attribute) >= 2 ORDER BY p.id_product ASC';
 
         return (int) Db::getInstance()->getValue($sql);
     }

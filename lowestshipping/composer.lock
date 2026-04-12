@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "44b100bec97358572b77b6a83cd1dd46",
+    "content-hash": "e99de4317a49206670f7e2cca8823d90",
     "packages": [],
     "packages-dev": [
         {
@@ -812,6 +812,59 @@
             "time": "2022-02-21T01:04:05+00:00"
         },
         {
+            "name": "phpstan/phpstan",
+            "version": "2.1.46",
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a193923fc2d6325ef4e741cf3af8c3e8f54dbf25",
+                "reference": "a193923fc2d6325ef4e741cf3af8c3e8f54dbf25",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
+            },
+            "bin": [
+                "phpstan",
+                "phpstan.phar"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan - PHP Static Analysis Tool",
+            "keywords": [
+                "dev",
+                "static analysis"
+            ],
+            "support": {
+                "docs": "https://phpstan.org/user-guide/getting-started",
+                "forum": "https://github.com/phpstan/phpstan/discussions",
+                "issues": "https://github.com/phpstan/phpstan/issues",
+                "security": "https://github.com/phpstan/phpstan/security/policy",
+                "source": "https://github.com/phpstan/phpstan-src"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/phpstan",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-04-01T09:25:14+00:00"
+        },
+        {
             "name": "phpunit/php-code-coverage",
             "version": "10.1.16",
             "source": {
@@ -1240,6 +1293,59 @@
                 }
             ],
             "time": "2026-01-27T05:48:37+00:00"
+        },
+        {
+            "name": "prestashop/php-dev-tools",
+            "version": "v5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PrestaShop/php-dev-tools.git",
+                "reference": "4b284d9b07a274505c81144536924eb4014e6fbf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PrestaShop/php-dev-tools/zipball/4b284d9b07a274505c81144536924eb4014e6fbf",
+                "reference": "4b284d9b07a274505c81144536924eb4014e6fbf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/console": "~3.2 || ~4.0 || ~5.0 || ~6.0 || ~7.0",
+                "symfony/filesystem": "~3.2 || ~4.0 || ~5.0 || ~6.0 || ~7.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.2"
+            },
+            "suggest": {
+                "phpstan/phpstan": "^0.12",
+                "prestashop/autoindex": "^2.0",
+                "prestashop/header-stamp": "^2.0",
+                "squizlabs/php_codesniffer": "^3.4"
+            },
+            "bin": [
+                "bin/prestashop-coding-standards"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PrestaShop\\CodingStandards\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PrestaShop"
+                }
+            ],
+            "description": "PrestaShop coding standards",
+            "support": {
+                "issues": "https://github.com/PrestaShop/php-dev-tools/issues",
+                "source": "https://github.com/PrestaShop/php-dev-tools/tree/v5"
+            },
+            "time": "2024-05-23T12:27:45+00:00"
         },
         {
             "name": "psr/container",

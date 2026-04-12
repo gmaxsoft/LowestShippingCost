@@ -1,12 +1,13 @@
 <?php
-
-declare(strict_types=1);
 /**
- * lowestshipping module — Maxsoft
+ * Upgrade script — lowestshipping module 1.1.0 (placeholder).
  *
- * @copyright 2026 Maxsoft
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
  * @license   https://opensource.org/licenses/MIT MIT License
  */
+declare(strict_types=1);
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }

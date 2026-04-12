@@ -60,12 +60,26 @@ Skrót (wszystkie zestawy zdefiniowane w `phpunit.xml.dist`):
 composer test
 ```
 
-Styl kodu (PHP CS Fixer, PER-CS2.0 + reguły phpdoc zbliżone do PSR-5):
+Styl kodu (PHP CS Fixer, PER-CS2.0 + reguły phpdoc zbliżone do PSR-5). Konfiguracja leży w **katalogu nadrzędnym** repozytorium (`.php-cs-fixer.dist.php`); skrypty `composer` z modułu ją ładują automatycznie.
 
 ```bash
 composer cs-check   # tylko podgląd
 composer cs-fix     # zapis poprawek
 ```
+
+Analiza statyczna (**PHPStan** przez [prestashop/php-dev-tools](https://github.com/PrestaShop/php-dev-tools)) — wymaga **działającej kopii PrestaShop** i zmiennej **`_PS_ROOT_DIR_`** wskazującej na katalog sklepu (ten sam co przy testach integracyjnych: katalog z `config/config.inc.php`):
+
+```bash
+# PowerShell
+$env:_PS_ROOT_DIR_ = "C:\sciezka\do\prestashop"
+composer phpstan
+
+# Linux / macOS
+export _PS_ROOT_DIR_=/ścieżka/do/prestashop
+composer phpstan
+```
+
+Skrypt `composer phpstan:init` odtwarza domyślny szablon `phpstan.neon` z pakietu (obecna konfiguracja w repozytorium jest już dostosowana pod ten moduł).
 
 Testy jednostkowe:
 

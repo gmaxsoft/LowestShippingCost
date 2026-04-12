@@ -1,8 +1,18 @@
 <?php
-
+/**
+ * Unit tests for LowestShippingQuoteBuilder.
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
 namespace Tests\Unit;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

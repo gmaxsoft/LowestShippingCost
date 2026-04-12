@@ -15,5 +15,6 @@
     <php>
         <ini name="error_reporting" value="-1"/>
         <ini name="display_errors" value="1"/>
+        <const name="_PS_VERSION_" value="9.0.0"/>
     </php>
 </phpunit>

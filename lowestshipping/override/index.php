@@ -1,6 +1,6 @@
 <?php
 /**
- * Blocks directory listing — views/templates/hook/.
+ * Blocks directory listing — lowestshipping module (override).
  *
  * @author    Maxsoft
  * @copyright 2007-2026 Maxsoft

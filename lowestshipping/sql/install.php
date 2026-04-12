@@ -1,12 +1,17 @@
 <?php
-
-declare(strict_types=1);
 /**
- * lowestshipping module — Maxsoft
+ * SQL install script (template table; module install() may not run this file).
  *
- * @copyright 2026 Maxsoft
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
  * @license   https://opensource.org/licenses/MIT MIT License
  */
+declare(strict_types=1);
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 $sql = [];
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'lowestshipping` (
@@ -19,3 +24,5 @@ foreach ($sql as $query) {
         return false;
     }
 }
+
+return true;

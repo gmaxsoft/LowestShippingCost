@@ -1,13 +1,16 @@
 <?php
-
+/**
+ * Front controller — JSON AJAX for product-page shipping estimate.
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
-/**
- * 2007-2026 PrestaShop
- *
- * @author   Maxsoft
- * @license  https://opensource.org/licenses/MIT MIT License
- */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class LowestshippingAjaxModuleFrontController extends ModuleFrontController
 {

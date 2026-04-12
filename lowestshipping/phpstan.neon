@@ -1,0 +1,23 @@
+# PrestaShop php-dev-tools — wymaga zmiennej środowiskowej _PS_ROOT_DIR_ (katalog główny sklepu z config/config.inc.php).
+# Przykład (PowerShell): $env:_PS_ROOT_DIR_ = "C:\sciezka\do\prestashop"
+# Przykład (bash): export _PS_ROOT_DIR_=/path/to/prestashop
+
+includes:
+    - vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+
+parameters:
+    paths:
+        - src
+        - lowestshipping.php
+        - controllers
+    excludePaths:
+        analyse:
+            - vendor
+            - tests
+            - views
+            - translations
+            - upgrade
+            - sql
+            - override
+    reportUnmatchedIgnoredErrors: false
+    level: 8

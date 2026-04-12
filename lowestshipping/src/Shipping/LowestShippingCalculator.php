@@ -1,10 +1,22 @@
 <?php
-
+/**
+ * Selects the cheapest delivery option from Cart::getDeliveryOptionList (unit-testable).
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
 namespace PrestaShop\Module\Lowestshipping\Shipping;
 
 use Carrier;
+
+use function is_array;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Logika wyboru najtańszej opcji z wyniku Cart::getDeliveryOptionList (testowalna bez bazy).
@@ -77,15 +89,16 @@ final class LowestShippingCalculator
 
     public static function resolveCarrierLabel(Carrier $carrier, int $idLang): string
     {
-        $name = $carrier->name;
-        if (is_array($name)) {
-            if (isset($name[$idLang]) && $name[$idLang] !== '') {
-                return (string) $name[$idLang];
+        /** @var mixed $rawName Legacy Carrier::$name may be a multilingual array. */
+        $rawName = $carrier->name;
+        if (is_array($rawName)) {
+            if (isset($rawName[$idLang]) && $rawName[$idLang] !== '') {
+                return (string) $rawName[$idLang];
             }
 
-            return (string) reset($name);
+            return (string) reset($rawName);
         }
 
-        return (string) $name;
+        return (string) $rawName;
     }
 }

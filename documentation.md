@@ -113,6 +113,7 @@ Poniżej drzewo **katalogu modułu** (bez `vendor/`, cache PHPUnit / PHP CS Fixe
 ```text
 repozytorium/
 ├── .github/workflows/phpunit.yml    # CI: cs-check + PHPUnit (Unit), working-directory: lowestshipping
+├── .php-cs-fixer.dist.php           # Konfiguracja PHP CS Fixer (ścieżka: lowestshipping/)
 ├── Readme.md
 ├── documentation.md
 └── lowestshipping/                  # kopiuj do modules/lowestshipping/
@@ -143,7 +144,6 @@ repozytorium/
     ├── translations/
     ├── upgrade/
     ├── views/
-    ├── .php-cs-fixer.dist.php
     ├── composer.json
     ├── composer.lock
     ├── config.xml
@@ -312,6 +312,8 @@ composer install
 ```
 
 Styl kodu: `composer cs-check` / `composer cs-fix` (PHP CS Fixer).
+
+Analiza statyczna: pakiet **`prestashop/php-dev-tools`** + **`phpstan/phpstan`** — `composer phpstan` z plikiem `phpstan.neon` (poziom 8, ścieżki: `src/`, `lowestshipping.php`, `controllers/`). Wymaga zmiennej środowiskowej **`_PS_ROOT_DIR_`** (katalog PrestaShop z `config/config.inc.php`), tak jak bootstrap opisany w dokumentacji PHPStan dla modułów PrestaShop.
 
 ### 13.2. Testy jednostkowe (Unit)
 

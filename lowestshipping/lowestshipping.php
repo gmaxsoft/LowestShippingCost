@@ -1,14 +1,12 @@
 <?php
-
-declare(strict_types=1);
-
 /**
- * 2007-2026 PrestaShop
+ * Main module class — lowest shipping estimate on the product page (PrestaShop 9).
  *
  * @author    Maxsoft
- * @copyright 2026 Maxsoft
+ * @copyright 2007-2026 Maxsoft
  * @license   https://opensource.org/licenses/MIT MIT License
  */
+declare(strict_types=1);
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -190,6 +188,16 @@ class Lowestshipping extends Module
         );
     }
 
+    private function formatDisplayPrice(float $price): string
+    {
+        $currency = $this->context->currency;
+        if ($currency === null || !Validate::isLoadedObject($currency)) {
+            return (string) $price;
+        }
+
+        return $this->context->getCurrentLocale()->formatPrice($price, (string) $currency->iso_code);
+    }
+
     /**
      * Kalkulacja najniższego kosztu dostawy przez natywne Cart::getDeliveryOptionList (reguły przewoźników, waga, cena, wymiary, kombinacje).
      *
@@ -230,7 +238,7 @@ class Lowestshipping extends Module
 
             return LowestShippingQuoteBuilder::buildAvailableRow(
                 (float) $raw['price'],
-                Tools::displayPrice((float) $raw['price'], $this->context->currency),
+                $this->formatDisplayPrice((float) $raw['price']),
                 (string) $raw['carrier_name'],
                 (bool) $raw['is_free_shipping'],
                 $carrierLine,
@@ -266,7 +274,7 @@ class Lowestshipping extends Module
             if ($fallback !== null) {
                 $shippingFrom = $this->trans(
                     'Shipping from %price%',
-                    ['%price%' => Tools::displayPrice($fallback, $this->context->currency)],
+                    ['%price%' => $this->formatDisplayPrice($fallback)],
                     'Modules.Lowestshipping.Shop',
                 );
             }

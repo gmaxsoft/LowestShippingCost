@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Back-office route for lowestshipping module configuration.
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
 namespace PrestaShop\Module\Lowestshipping\Controller;
@@ -10,6 +16,10 @@ use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 final class LowestShippingConfigurationController extends PrestaShopAdminController
 {

@@ -1,8 +1,18 @@
 <?php
-
+/**
+ * User-facing hints when no shipping estimate is available (no DB access).
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
 declare(strict_types=1);
 
 namespace PrestaShop\Module\Lowestshipping\Shipping;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Komunikaty przy niedostępnej wycenie (bez wywołań bazy).

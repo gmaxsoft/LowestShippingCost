@@ -1,4 +1,10 @@
 {**
+ * 2007-2026 PrestaShop — lowestshipping module (product page block).
+ *
+ * @author    Maxsoft
+ * @copyright 2007-2026 Maxsoft
+ * @license   https://opensource.org/licenses/MIT MIT License
+ *
  * Karta produktu — Smarty (nazwa pliku mała litera dla zgodności z Linux).
  *}
 <div
@@ -12,7 +18,7 @@
   <div class="lowest-shipping-main">
     <strong class="lowest-shipping-prefix">{$lowestshipping_prefix|escape:'html':'UTF-8'}</strong>
     <span id="lowest-shipping-price" class="lowest-shipping-price-value">
-      {if $lowestshipping_available}{$lowestshipping_formatted nofilter}{else}{$lowestshipping_hint|escape:'html':'UTF-8'}{/if}
+      {if $lowestshipping_available}{$lowestshipping_formatted|escape:'html':'UTF-8'}{else}{$lowestshipping_hint|escape:'html':'UTF-8'}{/if}
     </span>
   </div>
   {if $lowestshipping_description}

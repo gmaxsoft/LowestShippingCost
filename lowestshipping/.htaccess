@@ -1,0 +1,6 @@
+# lowestshipping — directory listing disabled (PrestaShop Addons security guideline)
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine off
+</IfModule>

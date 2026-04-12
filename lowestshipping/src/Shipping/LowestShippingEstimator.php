@@ -120,7 +120,7 @@ final class LowestShippingEstimator
 
         $context->cart = $simCart;
 
-        if (class_exists(CartRule::class)) {
+        if (class_exists('CartRule', false)) {
             CartRule::autoAddToCart($context, false);
         }
 

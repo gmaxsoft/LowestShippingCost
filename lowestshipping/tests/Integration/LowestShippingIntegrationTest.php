@@ -41,9 +41,9 @@ final class LowestShippingIntegrationTest extends TestCase
 {
     protected function setUp(): void
     {
-        if (!class_exists(Context::class, false)) {
+        if (!class_exists('Context', false)) {
             $this->markTestSkipped(
-                'Brak jądra PrestaShop (klasa Context). Ustaw PRESTASHOP_ROOT na katalog sklepu z config/config.inc.php i uruchom PHPUnit ponownie.',
+                'Brak jądra PrestaShop. Ustaw PRESTASHOP_ROOT na katalog sklepu z config/config.inc.php i uruchom PHPUnit ponownie.',
             );
         }
     }

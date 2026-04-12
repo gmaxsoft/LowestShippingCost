@@ -211,7 +211,7 @@ class Lowestshipping extends Module
      *   hint_message: string
      * }
      */
-    private function getLowestShippingCost(Product $product, ?int $idProductAttribute = null, int $quantity = 1): array
+    private function getLowestShippingCost(Product $product, int|null $idProductAttribute = null, int $quantity = 1): array
     {
         $id = (int) $product->id;
         $attr = ($idProductAttribute !== null && $idProductAttribute > 0)

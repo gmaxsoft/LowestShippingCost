@@ -10,14 +10,14 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
 use Carrier;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\Lowestshipping\Shipping\LowestShippingCalculator;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 final class LowestShippingCalculatorTest extends TestCase
 {

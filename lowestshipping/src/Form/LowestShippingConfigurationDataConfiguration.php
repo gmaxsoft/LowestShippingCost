@@ -51,6 +51,13 @@ final class LowestShippingConfigurationDataConfiguration implements DataConfigur
     {
         $errors = [];
 
+        $configuration['text_prefix'] = array_key_exists('text_prefix', $configuration)
+            ? (string) $configuration['text_prefix']
+            : '';
+        $configuration['description'] = array_key_exists('description', $configuration)
+            ? (string) $configuration['description']
+            : '';
+
         if (!$this->validateConfiguration($configuration)) {
             return ['Invalid configuration payload.'];
         }
@@ -77,8 +84,6 @@ final class LowestShippingConfigurationDataConfiguration implements DataConfigur
         return isset(
             $configuration['default_country'],
             $configuration['price_with_tax'],
-            $configuration['text_prefix'],
-            $configuration['description'],
             $configuration['enable_product_page'],
         );
     }

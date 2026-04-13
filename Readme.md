@@ -98,4 +98,4 @@ W powyższym badge należy zamienić `OWNER/REPO` na właściwą ścieżkę repo
 ## Licencja
 
 [MIT](lowestshipping/LICENSE) — Copyright (c) 2026 Maxsoft.
-Kontakt: Maxsoft.pl
+Kontakt: www.maxsoft.pl

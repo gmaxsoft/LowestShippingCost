@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="ModulesLowestshippingShop" source-language="en-US" target-language="pl-PL" datatype="plaintext">
+  <file original="ModulesLowestshippingShop" source-language="pl-PL" target-language="pl-PL" datatype="plaintext">
     <body>
       <trans-unit id="lowestshipping.shop.carrier_label">
-        <source>Carrier: %carrier%</source>
+        <source>Przewoźnik: %carrier%</source>
         <target>Przewoźnik: %carrier%</target>
       </trans-unit>
       <trans-unit id="lowestshipping.shop.no_carriers">
-        <source>No delivery option is available for this product at the moment.</source>
+        <source>Brak dostępnej opcji dostawy dla tego produktu.</source>
         <target>Brak dostępnej opcji dostawy dla tego produktu.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.shop.shipping_from">
-        <source>Shipping from %price%</source>
+        <source>Koszt dostawy od %price%</source>
         <target>Koszt dostawy od %price%</target>
       </trans-unit>
       <trans-unit id="lowestshipping.shop.checkout_fallback">
-        <source>Shipping cost will be calculated at checkout.</source>
+        <source>Koszt dostawy zostanie obliczony przy składaniu zamówienia.</source>
         <target>Koszt dostawy zostanie obliczony przy składaniu zamówienia.</target>
       </trans-unit>
     </body>

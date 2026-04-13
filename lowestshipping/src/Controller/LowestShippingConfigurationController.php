@@ -36,7 +36,7 @@ final class LowestShippingConfigurationController extends PrestaShopAdminControl
             $errors = $configurationFormHandler->save($form->getData());
 
             if ($errors === []) {
-                $this->addFlash('success', $this->trans('Settings updated.', [], 'Modules.Lowestshipping.Admin'));
+                $this->addFlash('success', $this->trans('Ustawienia zapisane.', [], 'Modules.Lowestshipping.Admin'));
 
                 return $this->redirectToRoute('lowestshipping_configuration');
             }
@@ -44,12 +44,12 @@ final class LowestShippingConfigurationController extends PrestaShopAdminControl
             foreach ($errors as $error) {
                 $message = match ($error) {
                     'Default country is required.' => $this->trans(
-                        'Please select a default country.',
+                        'Wybierz domyślny kraj.',
                         [],
                         'Modules.Lowestshipping.Admin',
                     ),
                     'Invalid configuration payload.' => $this->trans(
-                        'The submitted data is invalid.',
+                        'Przesłane dane są nieprawidłowe.',
                         [],
                         'Modules.Lowestshipping.Admin',
                     ),

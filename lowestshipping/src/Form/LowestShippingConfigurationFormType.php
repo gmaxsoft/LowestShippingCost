@@ -37,28 +37,28 @@ final class LowestShippingConfigurationFormType extends TranslatorAwareType
 
         $builder
             ->add('default_country', ChoiceType::class, [
-                'label' => $this->trans('Default country for shipping estimate', 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Used for guests and for customers without a delivery address.', 'Modules.Lowestshipping.Admin'),
+                'label' => $this->trans('Domyślny kraj do szacunku dostawy', 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Dla gości oraz klientów bez zapisanego adresu dostawy.', 'Modules.Lowestshipping.Admin'),
                 'choices' => $choices,
                 'constraints' => [new NotBlank()],
             ])
             ->add('price_with_tax', SwitchType::class, [
-                'label' => $this->trans('Show cost including tax', 'Modules.Lowestshipping.Admin'),
+                'label' => $this->trans('Pokazuj koszt z podatkiem', 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ])
             ->add('text_prefix', TextType::class, [
-                'label' => $this->trans('Price prefix', 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Example: "From " or "Cheapest delivery: "', 'Modules.Lowestshipping.Admin'),
+                'label' => $this->trans('Prefiks przed ceną', 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Przykład: „Od ” lub „Najtańsza dostawa: ”', 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ])
             ->add('description', TextareaType::class, [
-                'label' => $this->trans('Extra text under the price', 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Optional note shown below the shipping price on the product page.', 'Modules.Lowestshipping.Admin'),
+                'label' => $this->trans('Dodatkowy opis pod ceną', 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Opcjonalna notka pod ceną dostawy na stronie produktu.', 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ])
             ->add('enable_product_page', SwitchType::class, [
-                'label' => $this->trans('Show block on product page', 'Modules.Lowestshipping.Admin'),
-                'help' => $this->trans('Turn off to hide the estimate everywhere on product pages.', 'Modules.Lowestshipping.Admin'),
+                'label' => $this->trans('Włącz na karcie produktu', 'Modules.Lowestshipping.Admin'),
+                'help' => $this->trans('Wyłączenie ukrywa blok na wszystkich kartach produktów.', 'Modules.Lowestshipping.Admin'),
                 'required' => false,
             ]);
     }

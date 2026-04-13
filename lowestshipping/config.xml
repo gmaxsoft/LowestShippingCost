@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
 	<name>lowestshipping</name>
-	<displayName><![CDATA[Lowest shipping estimate]]></displayName>
+	<displayName><![CDATA[Najtańszy koszt dostawy]]></displayName>
 	<version><![CDATA[2.1.0]]></version>
-	<description><![CDATA[Shows the lowest deliverable shipping cost for the current product using the shop’s native carrier and cart rules logic.]]></description>
+	<description><![CDATA[Pokazuje na karcie produktu najniższy możliwy koszt dostawy z użyciem natywnych przewoźników i reguł koszyka PrestaShop.]]></description>
 	<author><![CDATA[Maxsoft]]></author>
 	<tab><![CDATA[shipping_logistics]]></tab>
+	<confirmUninstall><![CDATA[Odinstalować ten moduł?]]></confirmUninstall>
 	<is_configurable>1</is_configurable>
 	<need_instance>0</need_instance>
 </module>

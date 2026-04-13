@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file original="ModulesLowestshippingAdmin" source-language="en-US" target-language="en-US" datatype="plaintext">
+  <file original="ModulesLowestshippingAdmin" source-language="pl-PL" target-language="en-US" datatype="plaintext">
     <body>
       <trans-unit id="lowestshipping.admin.display_name">
-        <source>Lowest shipping estimate</source>
+        <source>Szacunek najtańszej dostawy</source>
         <target>Lowest shipping estimate</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.description">
-        <source>Shows the lowest deliverable shipping cost for the current product using the shop’s native carrier and cart rules logic.</source>
+        <source>Pokazuje najniższy możliwy koszt dostawy z użyciem natywnych przewoźników i reguł koszyka PrestaShop.</source>
         <target>Shows the lowest deliverable shipping cost for the current product using the shop’s native carrier and cart rules logic.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.uninstall">
-        <source>Uninstall this module?</source>
+        <source>Odinstalować ten moduł?</source>
         <target>Uninstall this module?</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.no_symfony">
-        <source>Symfony container is not available.</source>
+        <source>Kontener Symfony jest niedostępny.</source>
         <target>Symfony container is not available.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.settings_title">
-        <source>Lowest shipping on product page</source>
+        <source>Najtańsza dostawa na karcie produktu</source>
         <target>Lowest shipping on product page</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.settings_updated">
-        <source>Settings updated.</source>
+        <source>Ustawienia zapisane.</source>
         <target>Settings updated.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.default_country_shipping">
-        <source>Default country for shipping estimate</source>
+        <source>Domyślny kraj do szacunku dostawy</source>
         <target>Default country for shipping estimate</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.default_country_shipping_help">
-        <source>Used for guests and for customers without a delivery address.</source>
+        <source>Dla gości oraz klientów bez zapisanego adresu dostawy.</source>
         <target>Used for guests and for customers without a delivery address.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.show_cost_tax">
-        <source>Show cost including tax</source>
+        <source>Pokazuj koszt z podatkiem</source>
         <target>Show cost including tax</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.price_prefix">
-        <source>Price prefix</source>
+        <source>Prefiks przed ceną</source>
         <target>Price prefix</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.price_prefix_help">
-        <source>Example: "From " or "Cheapest delivery: "</source>
+        <source>Przykład: „Od ” lub „Najtańsza dostawa: ”</source>
         <target>Example: "From " or "Cheapest delivery: "</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.extra_under_price">
-        <source>Extra text under the price</source>
+        <source>Dodatkowy opis pod ceną</source>
         <target>Extra text under the price</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.extra_under_price_help">
-        <source>Optional note shown below the shipping price on the product page.</source>
+        <source>Opcjonalna notka pod ceną dostawy na stronie produktu.</source>
         <target>Optional note shown below the shipping price on the product page.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.show_on_product">
-        <source>Show block on product page</source>
+        <source>Włącz na karcie produktu</source>
         <target>Show block on product page</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.show_on_product_help">
-        <source>Turn off to hide the estimate everywhere on product pages.</source>
+        <source>Wyłączenie ukrywa blok na wszystkich kartach produktów.</source>
         <target>Turn off to hide the estimate everywhere on product pages.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.error_select_country">
-        <source>Please select a default country.</source>
+        <source>Wybierz domyślny kraj.</source>
         <target>Please select a default country.</target>
       </trans-unit>
       <trans-unit id="lowestshipping.admin.error_invalid_payload">
-        <source>The submitted data is invalid.</source>
+        <source>Przesłane dane są nieprawidłowe.</source>
         <target>The submitted data is invalid.</target>
       </trans-unit>
     </body>

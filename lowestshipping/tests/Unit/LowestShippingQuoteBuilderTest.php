@@ -49,7 +49,7 @@ final class LowestShippingQuoteBuilderTest extends TestCase
     {
         return [
             'bez_prefiksu' => ['', '<span>12,50</span>', 'DHL', false, 'Przewoźnik: DHL'],
-            'z_prefiksem_html' => ['<b>Od </b>', '<span>10</span>', 'Poczta', false, 'Carrier: Poczta'],
+            'z_prefiksem_html' => ['<b>Od </b>', '<span>10</span>', 'Poczta', false, 'Przewoźnik: Poczta'],
             'darmowa' => ['', '0,00 zł', '', true, ''],
         ];
     }

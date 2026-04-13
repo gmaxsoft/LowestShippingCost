@@ -35,13 +35,13 @@ class Lowestshipping extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->trans('Lowest shipping estimate', [], 'Modules.Lowestshipping.Admin');
+        $this->displayName = $this->trans('Najtańszy koszt dostawy', [], 'Modules.Lowestshipping.Admin');
         $this->description = $this->trans(
-            'Shows the lowest deliverable shipping cost for the current product using the shop’s native carrier and cart rules logic.',
+            'Pokazuje na karcie produktu najniższy możliwy koszt dostawy z użyciem natywnych przewoźników i reguł koszyka PrestaShop.',
             [],
             'Modules.Lowestshipping.Admin',
         );
-        $this->confirmUninstall = $this->trans('Uninstall this module?', [], 'Modules.Lowestshipping.Admin');
+        $this->confirmUninstall = $this->trans('Odinstalować ten moduł?', [], 'Modules.Lowestshipping.Admin');
 
         $this->ps_versions_compliancy = ['min' => '9.0.0', 'max' => '9.99.99'];
     }
@@ -78,7 +78,7 @@ class Lowestshipping extends Module
     {
         $container = SymfonyContainer::getInstance();
         if ($container === null) {
-            return $this->displayError($this->trans('Symfony container is not available.', [], 'Modules.Lowestshipping.Admin'));
+            return $this->displayError($this->trans('Kontener Symfony jest niedostępny.', [], 'Modules.Lowestshipping.Admin'));
         }
 
         $router = $container->get('router');
@@ -233,7 +233,7 @@ class Lowestshipping extends Module
 
         if ($raw['available'] && $raw['price'] !== null) {
             $carrierLine = $raw['carrier_name'] !== ''
-                ? $this->trans('Carrier: %carrier%', ['%carrier%' => $raw['carrier_name']], 'Modules.Lowestshipping.Shop')
+                ? $this->trans('Przewoźnik: %carrier%', ['%carrier%' => $raw['carrier_name']], 'Modules.Lowestshipping.Shop')
                 : '';
 
             return LowestShippingQuoteBuilder::buildAvailableRow(
@@ -258,8 +258,8 @@ class Lowestshipping extends Module
         int $defaultCountry,
         bool $withTax,
     ): string {
-        $noCarriers = $this->trans('No delivery option is available for this product at the moment.', [], 'Modules.Lowestshipping.Shop');
-        $checkout = $this->trans('Shipping cost will be calculated at checkout.', [], 'Modules.Lowestshipping.Shop');
+        $noCarriers = $this->trans('Brak dostępnej opcji dostawy dla tego produktu.', [], 'Modules.Lowestshipping.Shop');
+        $checkout = $this->trans('Koszt dostawy zostanie obliczony przy składaniu zamówienia.', [], 'Modules.Lowestshipping.Shop');
 
         $shippingFrom = null;
         if ($reason === 'no_address') {
@@ -273,7 +273,7 @@ class Lowestshipping extends Module
             );
             if ($fallback !== null) {
                 $shippingFrom = $this->trans(
-                    'Shipping from %price%',
+                    'Koszt dostawy od %price%',
                     ['%price%' => $this->formatDisplayPrice($fallback)],
                     'Modules.Lowestshipping.Shop',
                 );

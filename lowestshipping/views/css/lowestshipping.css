@@ -6,6 +6,36 @@
 .lowest-shipping-box {
   margin-top: 0.5rem;
   font-size: 0.95rem;
+  position: relative;
+}
+
+.lowest-shipping-box.is-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.lowest-shipping-spinner {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #ddd;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: lowestshipping-spin 0.65s linear infinite;
+  box-sizing: border-box;
+}
+
+.lowest-shipping-box.is-loading .lowest-shipping-spinner {
+  display: block;
+}
+
+@keyframes lowestshipping-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .lowest-shipping-main {

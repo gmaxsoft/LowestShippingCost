@@ -31,6 +31,10 @@ class LowestshippingAjaxModuleFrontController extends ModuleFrontController
 
         $idProduct = (int) Tools::getValue('id_product');
         $idProductAttribute = (int) Tools::getValue('id_product_attribute');
+        $quantity = (int) Tools::getValue('quantity');
+        if ($quantity <= 0) {
+            $quantity = 1;
+        }
 
         if ($idProduct <= 0) {
             $this->ajaxRender(json_encode(['success' => false, 'error' => 'bad_product']));
@@ -57,7 +61,7 @@ class LowestshippingAjaxModuleFrontController extends ModuleFrontController
         $prefix = (string) Configuration::get('LOWESTSHIPPING_TEXT_PREFIX');
         $description = (string) Configuration::get('LOWESTSHIPPING_DESCRIPTION');
 
-        $row = $module->getProductShippingEstimate($idProduct, $idProductAttribute);
+        $row = $module->getProductShippingEstimate($idProduct, $idProductAttribute, $quantity);
 
         $this->ajaxRender(json_encode([
             'success' => true,

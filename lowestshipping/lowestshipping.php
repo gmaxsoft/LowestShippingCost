@@ -124,19 +124,24 @@ class Lowestshipping extends Module
             $idProductAttribute = (int) Product::getDefaultAttribute($idProduct);
         }
 
+        $quantityWanted = (int) Tools::getValue('quantity_wanted');
+        if ($quantityWanted <= 0) {
+            $quantityWanted = 1;
+        }
+
         $product = new Product($idProduct, false, $this->context->language->id, $this->context->shop->id);
         if (!ProductAdditionalInfoHookGate::passesProductLoaded(Validate::isLoadedObject($product), (bool) $product->is_virtual)) {
             return '';
         }
 
-        $shipping = $this->getLowestShippingCost($product, $idProductAttribute > 0 ? $idProductAttribute : null, 1);
+        $shipping = $this->getLowestShippingCost($product, $idProductAttribute > 0 ? $idProductAttribute : null, $quantityWanted);
 
         $prefix = (string) Configuration::get('LOWESTSHIPPING_TEXT_PREFIX');
         $description = (string) Configuration::get('LOWESTSHIPPING_DESCRIPTION');
 
         $this->context->smarty->assign([
             'lowestshipping_prefix' => $prefix,
-            'lowestshipping_formatted' => $shipping['formatted_price'],
+            'lowestshipping_formatted' => strip_tags(html_entity_decode((string) $shipping['formatted_price'], ENT_QUOTES | ENT_HTML5, 'UTF-8')),
             'lowestshipping_price' => $shipping['price'],
             'lowestshipping_carrier_name' => $shipping['carrier_name'],
             'lowestshipping_carrier_line' => $shipping['carrier_line'],
@@ -146,7 +151,9 @@ class Lowestshipping extends Module
             'lowestshipping_description' => $description,
             'lowestshipping_id_product' => $idProduct,
             'lowestshipping_id_product_attribute' => $idProductAttribute,
+            'lowestshipping_quantity_wanted' => $quantityWanted,
             'lowestshipping_ajax_url' => $this->context->link->getModuleLink('lowestshipping', 'ajax', [], true),
+            'lowestshipping_getcost_url' => $this->context->link->getModuleLink('lowestshipping', 'getcost', ['ajax' => 1], true),
             'lowestshipping_token' => Tools::getToken(false),
         ]);
 
@@ -166,7 +173,7 @@ class Lowestshipping extends Module
      *   hint_message: string
      * }
      */
-    public function getProductShippingEstimate(int $idProduct, int $idProductAttribute): array
+    public function getProductShippingEstimate(int $idProduct, int $idProductAttribute, int $quantity = 1): array
     {
         $product = new Product($idProduct, false, $this->context->language->id, $this->context->shop->id);
         if (!Validate::isLoadedObject($product) || $product->is_virtual) {
@@ -181,10 +188,14 @@ class Lowestshipping extends Module
             ];
         }
 
+        if ($quantity <= 0) {
+            $quantity = 1;
+        }
+
         return $this->getLowestShippingCost(
             $product,
             $idProductAttribute > 0 ? $idProductAttribute : null,
-            1,
+            $quantity,
         );
     }
 
@@ -211,8 +222,12 @@ class Lowestshipping extends Module
      *   hint_message: string
      * }
      */
-    private function getLowestShippingCost(Product $product, int|null $idProductAttribute = null, int $quantity = 1): array
+    public function getLowestShippingCost(Product $product, int|null $idProductAttribute = null, int $quantity = 1): array
     {
+        if ($quantity <= 0) {
+            $quantity = 1;
+        }
+
         $id = (int) $product->id;
         $attr = ($idProductAttribute !== null && $idProductAttribute > 0)
             ? $idProductAttribute
